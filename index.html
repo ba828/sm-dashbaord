@@ -939,23 +939,42 @@ function mktR(){
 // ── YoY ──
 function yoyR(){
   var project=sel('yy_proj');
-  var fyTot=sum(flt('all',project),'target'),fyActTot=sum(flt('all',project),'actual'),pyTot=pyFor('all',project);
-  var growth=pyTot>0?Math.round((fyTot-pyTot)/pyTot*100):0;
-  var vals=MONTH_ORDER.map(function(m){return{m:m,py:pyFor(m,project),tgt:sum(flt(m,project),'target'),act:sum(flt(m,project),'actual')};});
-  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.py,v.tgt,v.act);}));if(maxV<=0)maxV=1;
+  var fyTot=sum(flt('all',project),'target');
+  var fyActTot=sum(flt('all',project),'actual');
+  var pyTot=pyFor('all',project);
+
+  // ✅ FIXED: actual this year vs actual last year
+  var growth=pyTot>0?Math.round((fyActTot-pyTot)/pyTot*100):0;
+
+  var vals=MONTH_ORDER.map(function(m){
+    return{m:m,py:pyFor(m,project),tgt:sum(flt(m,project),'target'),act:sum(flt(m,project),'actual')};
+  });
+  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.py,v.tgt,v.act);}));
+  if(maxV<=0)maxV=1;
+
   document.getElementById('page-yoy').innerHTML=
     '<div class="fbar"><label>Project</label><select data-type="project" id="yy_proj" onchange="yoyR()"></select></div>'+
     '<div class="krow">'+
-    kpi('FY25-26 Total PY',cr(pyTot)+'Cr','Last year actual','var(--purple)')+
+    kpi('FY25-26 Total (PY)',cr(pyTot)+'Cr','Last year actual','var(--purple)')+
     kpi('FY26-27 Target',cr(fyTot)+'Cr','This year target','var(--amber)')+
-    kpi('FY26-27 Actual MTD',cr(fyActTot)+'Cr',pct(fyActTot,fyTot)+'% of FY27 target','var(--blue)')+
-    kpi('Target Growth vs PY',(growth>=0?'▲':'▼')+Math.abs(growth)+'%','FY27 tgt vs FY26 act',growth>=0?'var(--green)':'var(--red)')+
+    kpi('FY26-27 Actual MTD',cr(fyActTot)+'Cr',pct(fyActTot,fyTot)+'% of target','var(--blue)')+
+    kpi('Actual Growth vs PY',(growth>=0?'▲':'▼')+Math.abs(growth)+'%','FY27 actual vs FY26 actual',growth>=0?'var(--green)':'var(--red)')+
     '</div>'+
     '<div class="card gf"><div class="st"><div class="stbar"></div>Month-wise: FY25-26 Actual vs FY26-27 Target vs FY26-27 Actual</div>'+
     '<div class="tw"><table>'+
-    '<thead><tr><th>Month</th><th>FY25-26 Actual (PY)</th><th>FY26-27 Target</th><th>FY26-27 Actual</th><th>% Achieved</th><th>Tgt Growth vs PY</th><th>Shortfall</th></tr></thead>'+
+    '<thead><tr>'+
+      '<th>Month</th>'+
+      '<th>FY25-26 Actual (PY)</th>'+
+      '<th>FY26-27 Target</th>'+
+      '<th>FY26-27 Actual</th>'+
+      '<th>% Achieved</th>'+
+      '<th>Actual Growth vs PY</th>'+
+      '<th>Shortfall</th>'+
+    '</tr></thead>'+
     '<tbody>'+vals.map(function(v){
-      var achP=pct(v.act,v.tgt),grP=v.py>0?Math.round((v.tgt-v.py)/v.py*100):0;
+      var achP=pct(v.act,v.tgt);
+      // ✅ FIXED: actual vs actual (not target vs PY)
+      var grP=v.py>0?Math.round((v.act-v.py)/v.py*100):0;
       var bg=v.act>0?(achP>=80?'#10b98108':achP>=50?'#f59e0b08':'#ef444408'):'';
       return '<tr style="background:'+bg+'">'+
         '<td class="tl">'+v.m+'</td>'+
@@ -963,39 +982,58 @@ function yoyR(){
         '<td style="color:var(--amber);font-weight:600">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</td>'+
         '<td style="color:var(--blue)">'+(v.act>0?cr(v.act)+'Cr':'—')+'</td>'+
         '<td>'+(v.tgt>0&&v.act>0?flag(achP):(v.tgt>0?'<span style="color:var(--muted)">Pending</span>':'—'))+'</td>'+
-        '<td>'+(v.py>0&&v.tgt>0?'<span style="color:'+(grP>=0?'var(--green)':'var(--red)')+'">'+( grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':'—')+'</td>'+
-        '<td style="color:var(--red)">'+(v.tgt>0&&v.act>0&&v.act<v.tgt?cr(v.tgt-v.act)+'Cr':(v.act>=v.tgt&&v.tgt>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td></tr>';
+        // ✅ Only show when both actuals exist, else Pending
+        '<td>'+(v.py>0&&v.act>0?'<span style="color:'+(grP>=0?'var(--green)':'var(--red)')+'">'+
+          (grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':
+          (v.py>0?'<span style="color:var(--muted)">Pending</span>':'—'))+'</td>'+
+        '<td style="color:var(--red)">'+(v.tgt>0&&v.act>0&&v.act<v.tgt?cr(v.tgt-v.act)+'Cr':
+          (v.act>=v.tgt&&v.tgt>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td>'+
+      '</tr>';
     }).join('')+'</tbody>'+
-    '<tfoot><tr><td class="tl">TOTAL</td><td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td><td style="color:var(--amber)">'+cr(fyTot)+'Cr</td><td style="color:var(--blue)">'+cr(fyActTot)+'Cr</td><td>'+flag(pct(fyActTot,fyTot))+'</td><td><span style="color:'+(growth>=0?'var(--green)':'var(--red)')+'">vs PY '+(growth>=0?'▲':'▼')+Math.abs(growth)+'%</span></td><td style="color:var(--red)">'+(fyTot>fyActTot?cr(fyTot-fyActTot)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr></tfoot>'+
+    '<tfoot><tr>'+
+      '<td class="tl">TOTAL</td>'+
+      '<td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td>'+
+      '<td style="color:var(--amber)">'+cr(fyTot)+'Cr</td>'+
+      '<td style="color:var(--blue)">'+cr(fyActTot)+'Cr</td>'+
+      '<td>'+flag(pct(fyActTot,fyTot))+'</td>'+
+      '<td><span style="color:'+(growth>=0?'var(--green)':'var(--red)')+'">'+
+        (growth>=0?'▲':'▼')+Math.abs(growth)+'% actual vs PY</span></td>'+
+      '<td style="color:var(--red)">'+(fyTot>fyActTot?cr(fyTot-fyActTot)+'Cr':
+        '<span style="color:var(--green)">✓</span>')+'</td>'+
+    '</tr></tfoot>'+
     '</table></div></div>'+
     '<div class="card"><div class="st"><div class="stbar"></div>Visual Comparison</div>'+
     '<div class="barchart" style="height:130px">'+
     vals.map(function(v){
       var hp=Math.round(v.py/maxV*110),ht=Math.round(v.tgt/maxV*110),ha=Math.round(v.act/maxV*110);
+      var grP=v.py>0&&v.act>0?Math.round((v.act-v.py)/v.py*100):null;
       return '<div class="bgroup"><div class="bpair" style="height:115px">'+
         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</div>'+ 
-          '<div class="bar" style="height:'+hp+'px;background:#8b5cf6;opacity:.6" title="'+v.m+' PY: '+v.py.toFixed(2)+'Cr"></div>'+ 
-        '</div>'+ 
+          '<div class="bar-label" style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</div>'+
+          '<div class="bar" style="height:'+hp+'px;background:#8b5cf6;opacity:.6"></div>'+
+        '</div>'+
         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--amber)">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</div>'+ 
-          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7" title="'+v.m+' Tgt: '+v.tgt.toFixed(2)+'Cr"></div>'+ 
-        '</div>'+ 
-        (v.act>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--blue)">'+cr(v.act)+'Cr</div>'+ 
-          '<div class="bar" style="height:'+ha+'px;background:var(--blue)" title="'+v.m+' Act: '+v.act.toFixed(2)+'Cr"></div>'+ 
-        '</div>':'<div style="width:16px"></div>')+
-        '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
+          '<div class="bar-label" style="color:var(--amber)">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</div>'+
+          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7"></div>'+
+        '</div>'+
+        (v.act>0?
+          '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+            '<div class="bar-label" style="color:var(--blue)">'+cr(v.act)+'Cr'+
+              (grP!==null?' <span style="font-size:8px;color:'+(grP>=0?'var(--green)':'var(--red)')+';">'+(grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':'')+
+            '</div>'+
+            '<div class="bar" style="height:'+ha+'px;background:var(--blue)"></div>'+
+          '</div>'
+        :'<div style="width:16px"></div>')+
+      '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
     }).join('')+
-    '</div>'+ 
+    '</div>'+
     '<div style="display:flex;gap:14px;margin-top:10px;font-size:11px">'+
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;opacity:.6"></span>FY25-26 Actual</span>'+ 
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;opacity:.6"></span>FY25-26 Actual</span>'+
     '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;opacity:.7"></span>FY26-27 Target</span>'+
-    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>FY26-27 Actual</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>FY26-27 Actual (▲▼ vs PY)</span>'+
     '</div></div>';
   buildFilters();
 }
-
 // ── INVENTORY ──
 function invR(){
   if(!D||!D.inventory||!D.inventory.length){

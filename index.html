@@ -41,6 +41,14 @@ select{background-color:#1a2e4a !important;border:1.5px solid var(--amber);color
 select option{background-color:#1a2e4a !important;color:#ffffff !important;font-weight:500}
 select:focus{border-color:var(--amber);box-shadow:0 0 0 2px #f59e0b33}
 select:focus{border-color:var(--amber)}
+.ms-wrap{position:relative;display:inline-block}
+.ms-btn{background:#1a2e4a;border:1.5px solid var(--amber);color:var(--text);padding:7px 30px 7px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;min-width:130px;white-space:nowrap;font-family:'Outfit',sans-serif;display:inline-block;min-height:34px;line-height:1.5;position:relative;user-select:none}
+.ms-btn::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--amber);font-size:10px;pointer-events:none}
+.ms-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:6px;min-width:170px;box-shadow:0 8px 24px #00000060;max-height:220px;overflow-y:auto}
+.ms-dd.open{display:block}
+.ms-opt{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:12px;white-space:nowrap;color:var(--text)}
+.ms-opt:hover{background:var(--surface)}
+.ms-opt input[type=checkbox]{accent-color:var(--amber);cursor:pointer;width:13px;height:13px;flex-shrink:0}
 .st{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--head);margin-bottom:12px;display:flex;align-items:center;gap:7px}
 .stbar{width:3px;height:15px;background:var(--amber);border-radius:2px;flex-shrink:0}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
@@ -701,18 +709,31 @@ var kpi=function(label,val,sub,color){return '<div class="kpi" style="--kc:'+(co
 var FILTER_STATE={};
 
 function flt(month,project,type){
+  var mArr=Array.isArray(month)?month:null;
+  var pArr=Array.isArray(project)?project:null;
   return D.sales.filter(function(r){
-    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project)&&(type==='all'||!type||r.type===type);
+    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
+    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
+    var tOk=type==='all'||!type||r.type===type;
+    return mOk&&pOk&&tOk;
   });
 }
 function pyFor(month,project){
+  var mArr=Array.isArray(month)?month:null;
+  var pArr=Array.isArray(project)?project:null;
   return D.salesPY.filter(function(r){
-    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);
+    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
+    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
+    return mOk&&pOk;
   }).reduce(function(s,r){return s+r.actual;},0);
 }
 function mktFlt(month,project){
+  var mArr=Array.isArray(month)?month:null;
+  var pArr=Array.isArray(project)?project:null;
   return D.marketing.filter(function(r){
-    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);
+    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
+    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
+    return mOk&&pOk;
   });
 }
 function groupBy(arr,key){return arr.reduce(function(acc,r){var k=r[key];(acc[k]=acc[k]||[]).push(r);return acc;},{});}
@@ -721,6 +742,52 @@ function sel(id){
   var value=(el&&el.value)?el.value:'';
   if(value) FILTER_STATE[id]=value;
   return value||FILTER_STATE[id]||'all';
+}
+
+var MS_STATE={};
+var MS_OPEN=null;
+
+function getMS(id){
+  var s=MS_STATE[id];
+  if(!s||!s.length||s[0]==='all')return 'all';
+  return s;
+}
+function buildMS(id,type,cb){
+  var items=type==='month'?D.months:D.projects;
+  var allLabel=type==='month'?'All Months':'All Projects';
+  var sel=MS_STATE[id]||['all'];
+  var isAll=sel[0]==='all';
+  var label=isAll?allLabel:(sel.length<=2?sel.join(', '):sel.slice(0,2).join(', ')+' +'+(sel.length-2));
+  var opts='<label class="ms-opt"><input type="checkbox" value="all"'+(isAll?' checked':'')+' onchange="msChange(\''+id+'\',\''+cb+'\',this)"> '+allLabel+'</label>'+
+    items.map(function(v){
+      var chk=!isAll&&sel.indexOf(v)>=0?' checked':'';
+      return '<label class="ms-opt"><input type="checkbox" value="'+v+'"'+chk+' onchange="msChange(\''+id+'\',\''+cb+'\',this)"> '+v+'</label>';
+    }).join('');
+  var isOpen=MS_OPEN===id?' open':'';
+  return '<div class="ms-wrap"><div class="ms-btn" id="'+id+'_btn" onclick="toggleMSDD(\''+id+'\')">'+label+'</div>'+
+    '<div class="ms-dd'+isOpen+'" id="'+id+'_dd">'+opts+'</div></div>';
+}
+function toggleMSDD(id){
+  var dd=document.getElementById(id+'_dd');
+  if(!dd)return;
+  if(MS_OPEN===id){MS_OPEN=null;dd.classList.remove('open');}
+  else{MS_OPEN=id;document.querySelectorAll('.ms-dd').forEach(function(d){d.classList.remove('open');});dd.classList.add('open');}
+}
+function msChange(id,cb,el){
+  var dd=document.getElementById(id+'_dd');
+  var cbs=Array.from(dd.querySelectorAll('input[type=checkbox]'));
+  var allCb=cbs[0];
+  if(el.value==='all'){
+    if(!el.checked)el.checked=true;
+    cbs.forEach(function(c){if(c.value!=='all')c.checked=false;});
+    MS_STATE[id]=['all'];
+  }else{
+    allCb.checked=false;
+    var picked=cbs.filter(function(c){return c.value!=='all'&&c.checked;}).map(function(c){return c.value;});
+    if(!picked.length){allCb.checked=true;MS_STATE[id]=['all'];}
+    else MS_STATE[id]=picked;
+  }
+  window[cb]();
 }
 
 function setStatus(state,msg){var cls={ok:'ok',err:'err',load:'load'}[state];document.getElementById('status').innerHTML='<span class="dot '+cls+'"></span>'+msg;}
@@ -761,13 +828,13 @@ function buildFilters(){
 
 // ── OVERVIEW ──
 function ovR(){
-  var month=sel('ov_month'),project=sel('ov_proj'),data=flt(month,project);
+  var month=getMS('ov_month'),project=getMS('ov_proj'),data=flt(month,project);
   var totT=sum(data,'target'),totA=sum(data,'actual'),py=pyFor(month,project),achP=pct(totA,totT);
   var meoTotA=D.meo.reduce(function(s,m){return s+m.actual;},0);
   var dA=sum(flt(month,project,'Direct'),'actual');
   document.getElementById('page-overview').innerHTML=
-    '<div class="fbar"><label>Month</label><select data-type="month" id="ov_month" onchange="ovR()"></select>'+
-    '<label>Project</label><select data-type="project" id="ov_proj" onchange="ovR()"></select></div>'+
+    '<div class="fbar"><label>Month</label>'+buildMS('ov_month','month','ovR')+
+    '<label>Project</label>'+buildMS('ov_proj','project','ovR')+'</div>'+
     '<div class="krow">'+
       kpi('FY27 Target',cr(totT)+'Cr','Total target','var(--amber)')+
       kpi('FY27 Actual',cr(totA)+'Cr',achP+'% achieved',achP>=80?'var(--green)':achP>=50?'var(--amber)':'var(--red)')+
@@ -842,14 +909,15 @@ function monthBarChart(project){
 
 // ── PROJECTS ──
 function prR(){
-  var project=sel('pr_proj'),month=sel('pr_month'),projs=project==='all'?D.projects:[project];
+  var project=getMS('pr_proj'),month=getMS('pr_month');
+  var projs=project==='all'?D.projects:(Array.isArray(project)?project:[project]);
   var pColors=['var(--amber)','var(--blue)','var(--green)','var(--purple)','var(--cyan)','var(--red)','#6366f1'];
   document.getElementById('page-projects').innerHTML=
-    '<div class="fbar"><label>Project</label><select data-type="project" id="pr_proj" onchange="prR()"></select>'+
-    '<label>Month</label><select data-type="month" id="pr_month" onchange="prR()"></select></div>'+
+    '<div class="fbar"><label>Project</label>'+buildMS('pr_proj','project','prR')+
+    '<label>Month</label>'+buildMS('pr_month','month','prR')+'</div>'+
     projs.map(function(p,pi){
-      var months=month==='all'?D.months:[month];
-      var allD=flt('all',p),totT=sum(allD,'target'),totA=sum(allD,'actual'),totP=pct(totA,totT),pyTot=pyFor('all',p);
+      var months=month==='all'?D.months:(Array.isArray(month)?month:[month]);
+      var allD=flt(month,p),totT=sum(allD,'target'),totA=sum(allD,'actual'),totP=pct(totA,totT),pyTot=pyFor(month,p);
       var rows=months.map(function(m){
         var d=flt(m,p),t=sum(d,'target'),a=sum(d,'actual'),py=pyFor(m,p),p2=pct(a,t);
         var bg=a>0?(p2>=80?'#10b98108':p2>=50?'#f59e0b08':'#ef444408'):'';
@@ -880,7 +948,7 @@ function prR(){
 
 // ── STM ──
 function stmR(){
-  var project=sel('stm_proj'),month=sel('stm_month'),type=sel('stm_type'),data=flt(month,project,type);
+  var project=getMS('stm_proj'),month=getMS('stm_month'),type=sel('stm_type'),data=flt(month,project,type);
   var bySTM=Object.entries(groupBy(data,'stm')).map(function(e){return{stm:e[0],type:e[1][0].type,t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
   var maxV=Math.max.apply(null,bySTM.map(function(s){return Math.max(s.t,s.a);}));if(maxV<=0)maxV=1;
   var totT=sum(data,'target'),totA=sum(data,'actual');
@@ -896,8 +964,8 @@ function stmR(){
       '<td style="color:var(--red)">'+(t>a?cr(t-a)+'Cr':(a>=t&&t>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td></tr>';
   }).join('');
   document.getElementById('page-stm').innerHTML=
-    '<div class="fbar"><label>Project</label><select data-type="project" id="stm_proj" onchange="stmR()"></select>'+
-    '<label>Month</label><select data-type="month" id="stm_month" onchange="stmR()"></select>'+
+    '<div class="fbar"><label>Project</label>'+buildMS('stm_proj','project','stmR')+
+    '<label>Month</label>'+buildMS('stm_month','month','stmR')+
     '<label>Type</label><select id="stm_type" onchange="stmR()"><option value="all">All</option><option value="Direct">Direct</option><option value="CP">CP</option></select></div>'+
     '<div class="g2 gf">'+
     '<div class="card"><div class="st"><div class="stbar"></div>STM Performance</div>'+
@@ -1033,14 +1101,14 @@ function meoR(){
 
 // ── DIRECT vs CP ──
 function scR(){
-  var month=sel('sc_month'),project=sel('sc_proj');
+  var month=getMS('sc_month'),project=getMS('sc_proj');
   var direct=flt(month,project,'Direct'),cp=flt(month,project,'CP'),all=flt(month,project);
   var dT=sum(direct,'target'),dA=sum(direct,'actual'),cT=sum(cp,'target'),cA=sum(cp,'actual'),tT=sum(all,'target'),tA=sum(all,'actual');
   var dSTM=Object.entries(groupBy(direct,'stm')).map(function(e){return{stm:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
   var cProj=Object.entries(groupBy(cp,'project')).map(function(e){return{proj:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;});
   document.getElementById('page-saletype').innerHTML=
-    '<div class="fbar"><label>Month</label><select data-type="month" id="sc_month" onchange="scR()"></select>'+
-    '<label>Project</label><select data-type="project" id="sc_proj" onchange="scR()"></select></div>'+
+    '<div class="fbar"><label>Month</label>'+buildMS('sc_month','month','scR')+
+    '<label>Project</label>'+buildMS('sc_proj','project','scR')+'</div>'+
     '<div class="krow">'+
     kpi('Direct Target',cr(dT)+'Cr',pct(dT,tT)+'% of total','var(--green)')+
     kpi('Direct Actual',cr(dA)+'Cr',pct(dA,dT)+'% achieved','var(--green)')+
@@ -1080,7 +1148,7 @@ function scR(){
 
 // ── MARKETING ──
 function mktR(){
-  var month=sel('mk_month'),project=sel('mk_proj'),data=mktFlt(month,project);
+  var month=getMS('mk_month'),project=getMS('mk_proj'),data=mktFlt(month,project);
   var mqlT=data.reduce(function(s,r){return s+r.mqlT;},0),mqlA=data.reduce(function(s,r){return s+r.mqlA;},0);
   var sqlT=data.reduce(function(s,r){return s+r.sqlT;},0),sqlA=data.reduce(function(s,r){return s+r.sqlA;},0);
   var svT=data.reduce(function(s,r){return s+r.svT;},0),svA=data.reduce(function(s,r){return s+r.svA;},0);
@@ -1089,8 +1157,8 @@ function mktR(){
   var projMQL=D.projects.map(function(p){var pd=mktFlt(month,p);return{proj:p,t:pd.reduce(function(s,r){return s+r.mqlT;},0),a:pd.reduce(function(s,r){return s+r.mqlA;},0)};}).filter(function(d){return d.t>0||d.a>0;});
   var maxPM=Math.max.apply(null,projMQL.map(function(d){return Math.max(d.t,d.a);}));if(maxPM<=0)maxPM=1;
   document.getElementById('page-marketing').innerHTML=
-    '<div class="fbar"><label>Month</label><select data-type="month" id="mk_month" onchange="mktR()"></select>'+
-    '<label>Project</label><select data-type="project" id="mk_proj" onchange="mktR()"></select></div>'+
+    '<div class="fbar"><label>Month</label>'+buildMS('mk_month','month','mktR')+
+    '<label>Project</label>'+buildMS('mk_proj','project','mktR')+'</div>'+
     '<div class="krow">'+
     kpi('MQL Target',mqlT.toLocaleString(),'Leads planned','var(--amber)')+
     kpi('MQL Actual',mqlA.toLocaleString(),pct(mqlA,mqlT)+'% of target','var(--blue)')+
@@ -1145,7 +1213,7 @@ function mktR(){
 
 // ── YoY ──
 function yoyR(){
-  var project=sel('yy_proj');
+  var project=getMS('yy_proj');
   var fyTot=sum(flt('all',project),'target');
   var fyActTot=sum(flt('all',project),'actual');
   var pyTot=pyFor('all',project);
@@ -1160,7 +1228,7 @@ function yoyR(){
   if(maxV<=0)maxV=1;
 
   document.getElementById('page-yoy').innerHTML=
-    '<div class="fbar"><label>Project</label><select data-type="project" id="yy_proj" onchange="yoyR()"></select></div>'+
+    '<div class="fbar"><label>Project</label>'+buildMS('yy_proj','project','yoyR')+'</div>'+
     '<div class="krow">'+
     kpi('FY25-26 Total (PY)',cr(pyTot)+'Cr','Last year actual','var(--purple)')+
     kpi('FY26-27 Target',cr(fyTot)+'Cr','This year target','var(--amber)')+
@@ -1364,6 +1432,11 @@ document.getElementById('loginUser').focus();
     setTimeout(updateFade, 400);
   };
 })();
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.ms-wrap')){
+    if(MS_OPEN){MS_OPEN=null;document.querySelectorAll('.ms-dd.open').forEach(function(d){d.classList.remove('open');});}
+  }
+});
 </script>
 </body>
 </html>

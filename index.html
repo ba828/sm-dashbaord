@@ -78,49 +78,56 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 
 
 /* ── LOGIN SCREEN ── */
-.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
 .login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:100%;max-width:420px;box-shadow:0 20px 60px #000a}
-.login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
-.login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:32px}
-.login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600}
-.login-input{width:100%;background:#0d1b2e;border:1.5px solid var(--border2);color:#fff;padding:11px 14px;border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;margin-bottom:16px;transition:.2s}
+.login-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
+.login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:28px}
+.login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600;display:block}
+.login-input{width:100%;background:#0d1b2e;border:1.5px solid var(--border2);color:#fff !important;padding:11px 14px;border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;margin-bottom:14px;transition:.2s}
 .login-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
-.login-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;transition:.2s;margin-top:4px}
+.login-input::placeholder{color:#475569}
+.login-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;margin-top:6px;transition:.2s}
 .login-btn:hover{background:#fbbf24;transform:translateY(-1px)}
 .login-btn:disabled{opacity:.5;cursor:wait;transform:none}
-.login-err{background:#ef444415;border:1px solid #ef444440;color:var(--red);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;display:none}
-.login-loading{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;display:none}
-.login-lock{font-size:48px;text-align:center;margin-bottom:16px}
-.login-footer{text-align:center;font-size:10px;color:var(--muted);margin-top:20px;opacity:.5}
-
-/* ── MAIN APP (hidden until login) ── */
+.login-err{background:#ef444415;border:1px solid #ef444440;color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;text-align:center}
+.login-progress{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:14px;display:none;overflow:hidden}
+.login-progress-fill{height:100%;background:var(--amber);border-radius:2px;transition:width .4s ease}
+.login-msg{text-align:center;color:var(--muted);font-size:12px;margin-top:8px;display:none}
+.login-lock{font-size:46px;text-align:center;margin-bottom:12px}
+.login-footer{text-align:center;font-size:10px;color:#334155;margin-top:18px;line-height:1.6}
 #app{display:none}
-
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.shake{animation:shake .35s ease}
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN SCREEN ══════════════════════════════════════════ -->
-<div class="login-overlay" id="loginScreen">
+<!-- LOGIN -->
+<div id="loginScreen" class="login-overlay">
   <div class="login-box" id="loginBox">
     <div class="login-lock">🔐</div>
     <div class="login-logo">S&M DASHBOARD</div>
-    <div class="login-sub">FY 2026-27 &nbsp;|&nbsp; Secure Access Required</div>
+    <div class="login-sub">FY 2026-27 &nbsp;|&nbsp; Authorised Access Only</div>
     <div class="login-err" id="loginErr"></div>
-    <div class="login-label">Username</div>
-    <input class="login-input" id="loginUser" type="text" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <div class="login-label">Password</div>
-    <input class="login-input" id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <div class="login-loading" id="loginLoading">⏳ Verifying &amp; loading data…</div>
+    <label class="login-label">Username</label>
+    <input class="login-input" id="loginUser" type="text" placeholder="Enter username"
+           autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/>
+    <label class="login-label">Password</label>
+    <input class="login-input" id="loginPass" type="password" placeholder="Enter password"
+           autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-progress" id="loginProgress">
+      <div class="login-progress-fill" id="loginProgressFill" style="width:0%"></div>
+    </div>
+    <div class="login-msg" id="loginMsg"></div>
     <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
-    <div class="login-footer">All financial data is AES-256 encrypted.<br/>Your password never leaves this browser.</div>
+    <div class="login-footer">
+      🔒 Password used only to decrypt data locally in your browser.<br/>
+      No password or credentials are stored or transmitted.
+    </div>
   </div>
 </div>
 
-<!-- ══ MAIN APP ══════════════════════════════════════════════ -->
+<!-- APP -->
 <div id="app">
 <nav class="nav">
   <div class="brand">S&M <span>FY 2026-27</span></div>
@@ -136,7 +143,7 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
   </div>
   <div class="nav-r">
     <span class="status" id="status"><span class="dot load"></span>Loading…</span>
-    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Data</button><button class="rbtn" id="logoutBtn" onclick="doLogout()" style="display:none;background:#ef4444;margin-left:4px">⏻ Logout</button>
+    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Excel</button>
   </div>
 </nav>
 <div id="page-overview"  class="page on"></div>
@@ -150,284 +157,301 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════
-//  CONFIGURATION — CHANGE THESE
-// ═══════════════════════════════════════════════════════════
 
-// Paste your Google Sheet ID here (from the URL)
-// URL format: https://docs.google.com/spreadsheets/d/SHEET_ID/edit
-var GOOGLE_SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
 
-// Login credentials (username → decryption password mapping)
-// Add as many users as you want
-// IMPORTANT: The password here MUST match what you used in encrypt_data.js
-var USERS = {
-  'admin':   '123456',   // full access
-  'manager': '123456',   // same data, different user
-  // 'viewer':  'DifferentPassword456!'  // could use different encryption
-};
+// ── Safe to be visible — sheet only has encrypted gibberish ──
+var SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
 
-// ═══════════════════════════════════════════════════════════
-//  AES-256-GCM DECRYPTION (runs in browser, no server needed)
-// ═══════════════════════════════════════════════════════════
+var ALLOWED_USERS = ['admin', 'manager', 'sales'];
 
-async function deriveKey(password, saltHex) {
-  // PBKDF2 — MUST match encrypt_data.js exactly: same iterations, same hash
-  const saltBytes = typeof saltHex === 'string' ? hexToBytes(saltHex) : saltHex;
-  const passBytes = new TextEncoder().encode(password);
-  const baseKey = await crypto.subtle.importKey('raw', passBytes, 'PBKDF2', false, ['deriveKey']);
+
+
+function hexToBytes(hex) {
+  var b = new Uint8Array(hex.length / 2);
+  for (var i = 0; i < hex.length; i += 2)
+    b[i/2] = parseInt(hex.substring(i, i+2), 16);
+  return b;
+}
+
+async function deriveKey(password, saltBytes) {
+  var passBytes = new TextEncoder().encode(password);
+  var base = await crypto.subtle.importKey('raw', passBytes, 'PBKDF2', false, ['deriveKey']);
   return crypto.subtle.deriveKey(
     {name:'PBKDF2', salt:saltBytes, iterations:100000, hash:'SHA-256'},
-    baseKey,
+    base,
     {name:'AES-GCM', length:256},
     false,
     ['decrypt']
   );
 }
 
-async function decryptData(encryptedHex, password) {
-  try {
-    // Parse: salt(16 bytes=32 hex) + iv(12 bytes=24 hex) + authTag(16 bytes=32 hex) + data
-    // MUST match encrypt_data.js packing order exactly
-    const saltHex    = encryptedHex.substring(0, 32);   // 16 bytes
-    const ivHex      = encryptedHex.substring(32, 56);  // 12 bytes
-    const authTagHex = encryptedHex.substring(56, 88);  // 16 bytes
-    const dataHex    = encryptedHex.substring(88);       // rest
+async function decryptPayload(encHex, password) {
+  // Parse packed format: salt(32hex) + iv(24hex) + authTag(32hex) + data
+  var salt = hexToBytes(encHex.substring(0, 32));
+  var iv   = hexToBytes(encHex.substring(32, 56));
+  var tag  = hexToBytes(encHex.substring(56, 88));
+  var data = hexToBytes(encHex.substring(88));
 
-    const saltBytes2  = hexToBytes(saltHex);
-    const key        = await deriveKey(password, saltBytes2);
-    const iv         = hexToBytes(ivHex);
-    // AES-GCM: concatenate ciphertext + authTag for Web Crypto API
-    const ciphertext = hexToBytes(dataHex + authTagHex);
+  var key = await deriveKey(password, salt);
 
-    const decrypted  = await crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, ciphertext);
-    return new TextDecoder().decode(decrypted);
-  } catch(e) {
-    throw new Error('Decryption failed — wrong password');
-  }
+  // Web Crypto AES-GCM expects ciphertext + authTag concatenated
+  var combined = new Uint8Array(data.length + tag.length);
+  combined.set(data, 0);
+  combined.set(tag, data.length);
+
+  // This THROWS if password is wrong — no check needed
+  var dec = await crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, combined);
+  return JSON.parse(new TextDecoder().decode(dec));
 }
 
-function hexToBytes(hex) {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2)
-    bytes[i/2] = parseInt(hex.substring(i, i+2), 16);
-  return bytes;
-}
+// ════════════════════════════════════════════════════════
+//  FETCH ENCRYPTED DATA FROM GOOGLE SHEETS
+// ════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════
-//  FETCH FROM GOOGLE SHEETS (public read, encrypted values)
-// ═══════════════════════════════════════════════════════════
+async function fetchFromSheets() {
+  setLoginMsg('Fetching data from Google Sheets…');
+  setLoginProgress(20);
 
-async function fetchEncryptedFromSheets() {
-  // Google Sheets JSON API — reads the EncryptedData sheet
-  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + GOOGLE_SHEET_ID +
-            '/values/EncryptedData!A:B?key=AIzaSyD_placeholder';
-
-  // Use the public CSV export as fallback (no API key needed if sheet is public)
-  var csvUrl = 'https://docs.google.com/spreadsheets/d/' + GOOGLE_SHEET_ID +
-               '/gviz/tq?tqx=out:csv&sheet=EncryptedData';
-
-  var res = await fetch(csvUrl);
-  if (!res.ok) throw new Error('Could not fetch from Google Sheets. Make sure sheet is public.');
+  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
+            '/gviz/tq?tqx=out:csv&sheet=EncryptedData&t=' + Date.now();
+  var res = await fetch(url);
+  if (!res.ok) throw new Error('Cannot reach Google Sheets. Check Sheet ID and sharing settings.');
   var csv = await res.text();
 
-  // Parse CSV: key,value rows
-  var rows = csv.trim().split('\n').map(function(row) {
-    // Handle quoted CSV values
-    var match = row.match(/^"?([^",]*)"?,"?([^"]*)"?$/);
-    if (!match) {
-      // Handle multiline quoted values
-      var parts = row.split(',');
-      return [parts[0].replace(/"/g,'').trim(), parts.slice(1).join(',').replace(/^"|"$/g,'').trim()];
-    }
-    return [match[1].trim(), match[2].trim()];
+  // Parse CSV key,value rows (handle quoted values)
+  var map = {};
+  csv.trim().split('\n').forEach(function(row) {
+    var comma = row.indexOf(',');
+    if (comma < 0) return;
+    var k = row.substring(0, comma).replace(/^"|"$/g, '').trim();
+    var v = row.substring(comma + 1).replace(/^"|"$/g, '').replace(/""/g, '"').trim();
+    if (k) map[k] = v;
   });
 
-  var map = {};
-  rows.forEach(function(r) { if(r[0]) map[r[0]] = r[1]; });
-
-  var totalChunks = parseInt(map['total_chunks'] || map['TOTAL_CHUNKS'] || '1');
-  var encrypted = '';
-  for (var i = 1; i <= totalChunks; i++) {
-    encrypted += (map['CHUNK_' + i] || '');
-  }
-
-  if (!encrypted) throw new Error('No encrypted data found in Google Sheets.');
-  return encrypted;
+  var n = parseInt(map['total_chunks'] || '1');
+  var enc = '';
+  for (var i = 1; i <= n; i++) enc += (map['CHUNK_' + i] || '');
+  if (!enc) throw new Error('No encrypted data in Google Sheets. Run encrypt_data.js first.');
+  return enc;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  LOGIN
-// ═══════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  LOGIN — no credential check, just decrypt
+// ════════════════════════════════════════════════════════
 
-var currentDecryptionPassword = null;
-var cachedDecryptedData = null;
+var D = null, currentPage = 'overview';
+var MONTH_ORDER = ['April','May','June','July','August','September',
+                   'October','November','December','January','February','March'];
+var _encCache = null;  // cache encrypted blob, store password in memory for reload
 
 async function doLogin() {
   var username = document.getElementById('loginUser').value.trim();
   var password = document.getElementById('loginPass').value;
 
+  // Clear previous error
+  document.getElementById('loginErr').style.display = 'none';
+
+  // Basic validation
   if (!username || !password) {
     showLoginErr('Please enter username and password');
     return;
   }
 
-  // Check credentials
-  if (!USERS[username] || USERS[username] !== password) {
-    showLoginErr('Invalid username or password');
+  // Check username exists (no password check — password proved by decryption)
+  if (ALLOWED_USERS.indexOf(username) === -1) {
+    showLoginErr('Username not recognised');
     document.getElementById('loginBox').classList.add('shake');
-    setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 500);
+    setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
     return;
   }
 
-  currentDecryptionPassword = password;
-
-  // Show loading
-  document.getElementById('loginBtn').disabled = true;
-  document.getElementById('loginErr').style.display = 'none';
-  document.getElementById('loginLoading').style.display = 'block';
-  document.getElementById('loginBtn').textContent = 'Loading…';
+  // Disable button, show progress
+  setBusy(true);
 
   try {
-    // Check if Google Sheet ID is configured
-    if (GOOGLE_SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
-      // Demo mode — load with demo data
-      await loadDemoData();
+    var encHex;
+
+    if (SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
+      // Demo mode — Sheet ID not configured yet
+      setLoginMsg('Loading demo data…');
+      setLoginProgress(50);
+      await new Promise(function(r){ setTimeout(r, 500); });
+      D = getDemoData();
+      setLoginProgress(100);
     } else {
-      // Real mode — fetch from Google Sheets
-      var encryptedHex = await fetchEncryptedFromSheets();
-      var decryptedJson = await decryptData(encryptedHex, currentDecryptionPassword);
-      var rawData = JSON.parse(decryptedJson);
-      D = processData(rawData);
+      // Step 1: Fetch encrypted data from Google Sheets
+      encHex = await fetchFromSheets();
+      _encCache = {hex: encHex, pass: password}; // store in memory for reload
+
+      // Step 2: Decrypt with the entered password
+      // If password is WRONG → AES-GCM auth tag fails → throws → catch below
+      setLoginMsg('Decrypting with your password…');
+      setLoginProgress(65);
+
+      var raw;
+      try {
+        raw = await decryptPayload(encHex, password);
+      } catch(e) {
+        // Decryption failed = wrong password
+        document.getElementById('loginBox').classList.add('shake');
+        setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
+        setBusy(false);
+        setLoginProgress(0);
+        showLoginErr('Wrong password — please try again');
+        return;
+      }
+
+      setLoginProgress(90);
+      D = processData(raw);
     }
 
-    // Success — show app
+    // Step 3: Show dashboard
+    setLoginProgress(100);
+    await new Promise(function(r){ setTimeout(r, 200); });
+
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     document.getElementById('reloadBtn').style.display = 'inline-block';
     document.getElementById('logoutBtn').style.display = 'inline-block';
-    document.getElementById('status').innerHTML = '<span class="dot ok"></span>Decrypted &amp; Live';
+    document.getElementById('status').innerHTML =
+      '<span class="dot ok"></span>' + username + ' · Live';
 
     buildFilters();
     render(currentPage);
 
   } catch(e) {
-    showLoginErr('Error: ' + e.message);
-    document.getElementById('loginLoading').style.display = 'none';
-    document.getElementById('loginBtn').disabled = false;
-    document.getElementById('loginBtn').textContent = 'SIGN IN →';
+    setBusy(false);
+    setLoginProgress(0);
+    showLoginErr(e.message || 'An error occurred');
   }
 }
 
-function showLoginErr(msg) {
-  var el = document.getElementById('loginErr');
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-
-function doLogout() {
-  // Clear all sensitive data from memory
-  D = null;
-  cachedDecryptedData = null;
-  currentDecryptionPassword = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginUser').value = '';
-  document.getElementById('loginBtn').disabled = false;
-  document.getElementById('loginBtn').textContent = 'SIGN IN →';
-  document.getElementById('loginLoading').style.display = 'none';
-  document.getElementById('loginErr').style.display = 'none';
-  document.getElementById('reloadBtn').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'none';
-}
-
+// ── Reload (uses cached password in memory) ──────────────
 async function reloadData() {
+  if (!_encCache) {
+    // No cache — re-fetch from sheets
+    document.getElementById('reloadBtn').disabled = true;
+    document.getElementById('status').innerHTML = '<span class="dot load"></span>Refreshing…';
+    try {
+      _encCache = {hex: await fetchFromSheets(), pass: _encCache ? _encCache.pass : ''};
+    } catch(e) {
+      document.getElementById('status').innerHTML = '<span class="dot err"></span>' + e.message;
+      document.getElementById('reloadBtn').disabled = false;
+      return;
+    }
+  }
   document.getElementById('reloadBtn').disabled = true;
   document.getElementById('status').innerHTML = '<span class="dot load"></span>Refreshing…';
   try {
-    if (GOOGLE_SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
-      await loadDemoData();
-    } else {
-      var encryptedHex = await fetchEncryptedFromSheets();
-      var decryptedJson = await decryptData(encryptedHex, currentDecryptionPassword);
-      var rawData = JSON.parse(decryptedJson);
-      D = processData(rawData);
-    }
-    document.getElementById('status').innerHTML = '<span class="dot ok"></span>Updated · ' + new Date().toLocaleTimeString();
+    // Force re-fetch fresh data
+    var enc = await fetchFromSheets();
+    var raw = await decryptPayload(enc, _encCache.pass);
+    _encCache.hex = enc;
+    D = processData(raw);
+    document.getElementById('status').innerHTML =
+      '<span class="dot ok"></span>Updated · ' + new Date().toLocaleTimeString();
     buildFilters();
     render(currentPage);
   } catch(e) {
     document.getElementById('status').innerHTML = '<span class="dot err"></span>' + e.message;
-  } finally {
-    document.getElementById('reloadBtn').disabled = false;
   }
+  document.getElementById('reloadBtn').disabled = false;
 }
 
-// ═══════════════════════════════════════════════════════════
-//  DEMO MODE (when Google Sheet ID not yet configured)
-// ═══════════════════════════════════════════════════════════
+// ── Logout — wipes everything from memory ────────────────
+function doLogout() {
+  D = null;
+  _encCache = null;   // wipe password from memory
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('reloadBtn').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('loginErr').style.display = 'none';
+  setBusy(false);
+  setLoginProgress(0);
+  document.getElementById('loginUser').focus();
+}
 
-async function loadDemoData() {
-  var DEMO_PROJECTS = ['KALRAV','ORAN','SCULPTURE AI','ANAHATA','WAGHODIYA','TUNDAV','BK1'];
-  var DEMO_MONTHS   = ['April','May','June','July','August','September','October','November','December','January','February','March'];
-  var DEMO_STMS     = ['Rachit','Dilpesh','Nikhil','Vinay','Anand','Het','Sachin','Nikhil Patil','Akash','Daksh','Kunal'];
-
+// ── Demo data (when Sheet ID not set yet) ─────────────────
+function getDemoData() {
+  var P = ['HORIZON','NOVA','ELARA','ZENITH','PRISM','VERTEX','SOLARA'];
+  var T = {HORIZON:9,NOVA:1.8,ELARA:1.4,ZENITH:4.2,PRISM:0.6,VERTEX:2.0,SOLARA:2.6};
+  var A = {HORIZON:0,NOVA:0.8,ELARA:0,ZENITH:2.99,PRISM:0,VERTEX:0.71,SOLARA:1.3};
+  var M = MONTH_ORDER;
   var sales = [];
-  var aprilTargets = {KALRAV:9, ORAN:1.8, 'SCULPTURE AI':1.4, ANAHATA:4.2, WAGHODIYA:0.6, TUNDAV:2.0, BK1:2.6};
-  var aprilActuals = {KALRAV:7.1, ORAN:0.8, 'SCULPTURE AI':0, ANAHATA:2.99, WAGHODIYA:0, TUNDAV:0.71, BK1:1.3};
-
-  DEMO_PROJECTS.forEach(function(p) {
-    ['April','May','June'].forEach(function(m) {
-      var tgt = aprilTargets[p] || 1;
-      sales.push({Month:m, Project_name:p, Stm_name:'Kunal', Sales_type:'CP',
-        Target: parseFloat((tgt*0.4).toFixed(2)),
-        Actual: m==='April' ? parseFloat((aprilActuals[p]*0.4||0).toFixed(2)) : 0});
-      sales.push({Month:m, Project_name:p, Stm_name:'Nikhil', Sales_type:'Direct',
-        Target: parseFloat((tgt*0.6).toFixed(2)),
-        Actual: m==='April' ? parseFloat((aprilActuals[p]*0.6||0).toFixed(2)) : 0});
-    });
-  });
-
-  var rawData = {
+  M.forEach(function(m){ P.forEach(function(p){
+    var t=T[p]||1, a=m==='April'?(A[p]||0):0;
+    sales.push({Month:m,Project_name:p,Stm_name:'Rahul',Sales_type:'CP',Target:+(t*.4).toFixed(2),Actual:+(a*.4).toFixed(2)});
+    sales.push({Month:m,Project_name:p,Stm_name:'Arjun',Sales_type:'Direct',Target:+(t*.6).toFixed(2),Actual:+(a*.6).toFixed(2)});
+  });});
+  return processData({
     sales: sales,
-    meo: DEMO_PROJECTS.map(function(p) {
-      return {'Project Name':p, 'Target (Current Month)':aprilTargets[p]||1,
-              'Actual till Date':aprilActuals[p]||0, 'Expected Closing': parseFloat((Math.random()*3+0.5).toFixed(1))};
-    }),
-    inventory: DEMO_PROJECTS.map(function(p) {
-      return {'Project Name':p, Total_units:70, Units_sold:Math.floor(Math.random()*30+30), Units_Available:0, Potential:5};
-    }).map(function(r) { r.Units_Available = r.Total_units - r.Units_sold; return r; }),
-    marketing: ['April','May','June'].flatMap(function(m) {
-      return DEMO_PROJECTS.map(function(p) {
-        return {Month:m, Project_Name:p,
-          MQL_Target:500, MQL_Actual:m==='April'?Math.floor(Math.random()*400+100):0,
-          SQL_Target:100, SQL_Actual:m==='April'?Math.floor(Math.random()*80+20):0,
-          SV_Target:30, SV_Actual:m==='April'?Math.floor(Math.random()*25+5):0,
-          Closures_Target:3, Closures_Actual:0};
-      });
-    }),
-    salesPY: DEMO_PROJECTS.flatMap(function(p) {
-      return ['April','May','June'].map(function(m) {
-        return {Month:m, Project_Name:p, Actual: parseFloat((Math.random()*5+1).toFixed(2))};
-      });
-    }),
-  };
-
-  D = processData(rawData);
-  document.getElementById('status').innerHTML = '<span class="dot ok" style="background:var(--amber)"></span>Demo Mode';
+    meo: P.map(function(p){ return {'Project Name':p,'Target (Current Month)':T[p]||1,'Actual till Date':A[p]||0,'Expected Closing':+(Math.random()*3+.5).toFixed(1)}; }),
+    inventory: P.map(function(p){ var s=Math.floor(Math.random()*30+30); return {'Project Name':p,Total_units:70,Units_sold:s,Units_Available:70-s,Potential:5}; }),
+    marketing: ['April','May','June'].reduce(function(acc,m){ return acc.concat(P.map(function(p){ return {Month:m,Project_Name:p,MQL_Target:500,MQL_Actual:m==='April'?Math.floor(Math.random()*400+100):0,SQL_Target:100,SQL_Actual:m==='April'?Math.floor(Math.random()*80+20):0,SV_Target:30,SV_Actual:m==='April'?Math.floor(Math.random()*25+5):0,Closures_Target:3,Closures_Actual:0}; })); }, []),
+    salesPY: M.reduce(function(acc,m){ return acc.concat(P.map(function(p){ return {Month:m,Project_Name:p,Actual:+(Math.random()*5+1).toFixed(2)}; })); }, []),
+  });
 }
 
-// ═══════════════════════════════════════════════════════════
-//  CORE DATA STATE
-// ═══════════════════════════════════════════════════════════
-var D = null;
-var currentPage = 'overview';
-var MONTH_ORDER = ['April','May','June','July','August','September','October','November','December','January','February','March'];
+// ── UI helpers ────────────────────────────────────────────
+function showLoginErr(msg) {
+  var el = document.getElementById('loginErr');
+  el.textContent = msg; el.style.display = 'block';
+}
+function setBusy(on) {
+  document.getElementById('loginBtn').disabled = on;
+  document.getElementById('loginBtn').textContent = on ? 'Please wait…' : 'SIGN IN →';
+  document.getElementById('loginMsg').style.display = on ? 'block' : 'none';
+  document.getElementById('loginProgress').style.display = on ? 'block' : 'none';
+}
+function setLoginMsg(msg) { document.getElementById('loginMsg').textContent = msg; }
+function setLoginProgress(pct) { document.getElementById('loginProgressFill').style.width = pct + '%'; }
 
-// ═══════════════════════════════════════════════════════════
-//  PROCESS DATA (unchanged from original)
-// ═══════════════════════════════════════════════════════════
+// ── Navigation ────────────────────────────────────────────
+function nav(name, el) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  document.getElementById('page-' + name).classList.add('on');
+  el.classList.add('on');
+  currentPage = name;
+  if (D) render(name);
+}
+function render(name) {
+  var fn = {overview:ovR,projects:prR,stm:stmR,meo:meoR,saletype:scR,marketing:mktR,yoy:yoyR,inventory:invR};
+  if (fn[name]) fn[name]();
+}
+function buildFilters() {
+  document.querySelectorAll('[data-type="month"]').forEach(function(el) {
+    var v = el.value;
+    el.innerHTML = '<option value="all">All Months</option>' +
+      D.months.map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join('');
+    el.value = v;
+  });
+  document.querySelectorAll('[data-type="project"]').forEach(function(el) {
+    var v = el.value;
+    el.innerHTML = '<option value="all">All Projects</option>' +
+      D.projects.map(function(p){ return '<option value="'+p+'">'+p+'</option>'; }).join('');
+    el.value = v;
+  });
+}
+
+var sum=function(arr,f){return arr.reduce(function(s,r){return s+(r[f]||0);},0);};
+var pct=function(a,b){return b>0?Math.round(a/b*100):0;};
+var gf=function(p){return p>=80?'gr':p>=50?'yw':'rd';};
+var fi=function(p){return p>=80?'🟢':p>=50?'🟡':'🔴';};
+var flag=function(p,l){return '<span class="flag '+gf(p)+'">'+fi(p)+' '+(l!=null?l:p+'%')+'</span>';};
+var cr=function(v){return v>0?'₹'+parseFloat(v).toFixed(2):'—';};
+var pb=function(p){var c=p>=80?'var(--green)':p>=50?'var(--amber)':'var(--red)';return '<div class="pb"><div class="pf" style="width:'+Math.min(p,100)+'%;background:'+c+'"></div></div>';};
+var kpi=function(label,val,sub,color){return '<div class="kpi" style="--kc:'+(color||'var(--amber)')+'"><div class="klabel">'+label+'</div><div class="kval">'+val+'</div><div class="ksub">'+sub+'</div></div>';};
+var FILTER_STATE={};
+function flt(month,project,type){return D.sales.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project)&&(type==='all'||!type||r.type===type);});}
+function pyFor(month,project){return D.salesPY.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);}).reduce(function(s,r){return s+r.actual;},0);}
+function mktFlt(month,project){return D.marketing.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);});}
+function groupBy(arr,key){return arr.reduce(function(acc,r){var k=r[key];(acc[k]=acc[k]||[]).push(r);return acc;},{});}
+function sel(id){var el=document.getElementById(id);var v=(el&&el.value)?el.value:'';if(v)FILTER_STATE[id]=v;return v||FILTER_STATE[id]||'all';}
+
 function processData(raw){
   var sales=raw.sales.map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_name||'').trim(),stm:(r.Stm_name||'').trim(),type:(r.Sales_type||'').trim(),target:+r.Target||0,actual:+r.Actual||0};});
   var meo=raw.meo.map(function(r){return{project:(r['Project Name']||'').trim(),target:+r['Target (Current Month)']||0,actual:+r['Actual till Date']||0,expected:+r['Expected Closing']||0};});
@@ -440,9 +464,6 @@ function processData(raw){
   return{sales,meo,inventory,marketing,salesPY,projects,stms,months};
 }
 
-// ═══════════════════════════════════════════════════════════
-//  ALL RENDER FUNCTIONS (unchanged from original)
-// ═══════════════════════════════════════════════════════════
 
 var sum=function(arr,f){return arr.reduce(function(s,r){return s+(r[f]||0);},0);};
 var pct=function(a,b){return b>0?Math.round(a/b*100):0;};
@@ -1050,9 +1071,7 @@ function invR(){
     }).join('')+'</div>';
 }
 
-// ═══════════════════════════════════════════════════════════
-//  BOOT — show login screen (no auto-load)
-// ═══════════════════════════════════════════════════════════
+// ── Boot ─────────────────────────────────────────────────
 document.getElementById('loginUser').focus();
 </script>
 </body>

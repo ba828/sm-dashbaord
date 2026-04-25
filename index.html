@@ -142,8 +142,9 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
     <div class="tab" onclick="nav('inventory',this)">Inventory</div>
   </div>
   <div class="nav-r">
-    <span class="status" id="status"></span>
-    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Data</button>
+    <span class="status" id="status"><span class="dot load"></span>Loading…</span>
+    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Excel</button>
+    <button class="rbtn" id="logoutBtn" onclick="doLogout()" style="display:none;background:#1e3355;color:#e2e8f0;border:1px solid var(--border2)">⏏ Logout</button>
   </div>
 </nav>
 <div id="page-overview"  class="page on"></div>
@@ -157,33 +158,14 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 </div>
 
 <script>
-// ════════════════════════════════════════════════════════
-//  WHAT IS VISIBLE IN F12 INSPECT:
-//  ✅ SHEET_ID  — safe (sheet only has encrypted gibberish)
-//  ✅ USERNAMES — safe (just a list, no passwords)
-//  ❌ PASSWORD  — NOT HERE. Never stored. Never visible.
-//
-//  HOW AUTH WORKS:
-//  User types password → used as AES-256 decryption key →
-//  Wrong password = decryption FAILS → error shown
-//  Right password = data decrypts → dashboard opens
-//  No password comparison. Nothing to steal.
-// ════════════════════════════════════════════════════════
+
 
 // ── Safe to be visible — sheet only has encrypted gibberish ──
 var SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
 
-// ── Only usernames — NO passwords stored here ─────────────
-// To add a user: just add their username to this list.
-// Their password is whatever you told them when you ran encrypt_data.js
 var ALLOWED_USERS = ['admin', 'manager', 'sales'];
 
-// ════════════════════════════════════════════════════════
-//  AES-256-GCM DECRYPTION (browser Web Crypto — no server)
-//  The password IS the decryption key.
-//  Wrong password → AES auth tag fails → error
-//  Right password → data decrypts → login success
-// ════════════════════════════════════════════════════════
+
 
 function hexToBytes(hex) {
   var b = new Uint8Array(hex.length / 2);
@@ -335,27 +317,10 @@ async function doLogin() {
     document.getElementById('status').innerHTML =
       '<span class="dot ok"></span>' + username + ' · Live';
 
-    // Reset all pages, set overview as active
-    document.querySelectorAll('.page').forEach(function(p) {
-      p.classList.remove('on');
-      p.innerHTML = '';
-    });
-    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
-    document.querySelector('.tab').classList.add('on');
-    currentPage = 'overview';
-    document.getElementById('page-overview').classList.add('on');
-
-    // Build filters then render with a small delay for DOM to settle
-    buildFilters();
-    setTimeout(function() {
-      try {
-        ovR();
-      } catch(err) {
-        console.error('Render error:', err);
-        document.getElementById('page-overview').innerHTML =
-          '<div style="color:var(--red);padding:20px">Render error: ' + err.message + '</div>';
-      }
-    }, 100);
+    try { buildFilters(); render(currentPage); } catch(re) {
+      document.getElementById('page-overview').innerHTML =
+        '<div class="ebox"><h3>⚠ Render Error</h3><p>'+re.message+'</p></div>';
+    }
 
   } catch(e) {
     setBusy(false);
@@ -414,15 +379,15 @@ function doLogout() {
 
 // ── Demo data (when Sheet ID not set yet) ─────────────────
 function getDemoData() {
-  var P = ['KALRAV','ORAN','SCULPTURE AI','ANAHATA','WAGHODIYA','TUNDAV','BK1'];
-  var T = {KALRAV:9,ORAN:1.8,'SCULPTURE AI':1.4,ANAHATA:4.2,WAGHODIYA:0.6,TUNDAV:2.0,BK1:2.6};
-  var A = {KALRAV:7.1,ORAN:0.8,'SCULPTURE AI':0,ANAHATA:2.99,WAGHODIYA:0,TUNDAV:0.71,BK1:1.3};
+  var P = ['HORIZON','NOVA','ELARA','ZENITH','PRISM','VERTEX','SOLARA'];
+  var T = {HORIZON:9,NOVA:1.8,ELARA:1.4,ZENITH:4.2,PRISM:0.6,VERTEX:2.0,SOLARA:2.6};
+  var A = {HORIZON:0,NOVA:0.8,ELARA:0,ZENITH:2.99,PRISM:0,VERTEX:0.71,SOLARA:1.3};
   var M = MONTH_ORDER;
   var sales = [];
   M.forEach(function(m){ P.forEach(function(p){
     var t=T[p]||1, a=m==='April'?(A[p]||0):0;
-    sales.push({Month:m,Project_name:p,Stm_name:'Kunal',Sales_type:'CP',Target:+(t*.4).toFixed(2),Actual:+(a*.4).toFixed(2)});
-    sales.push({Month:m,Project_name:p,Stm_name:'Nikhil',Sales_type:'Direct',Target:+(t*.6).toFixed(2),Actual:+(a*.6).toFixed(2)});
+    sales.push({Month:m,Project_name:p,Stm_name:'Rahul',Sales_type:'CP',Target:+(t*.4).toFixed(2),Actual:+(a*.4).toFixed(2)});
+    sales.push({Month:m,Project_name:p,Stm_name:'Arjun',Sales_type:'Direct',Target:+(t*.6).toFixed(2),Actual:+(a*.6).toFixed(2)});
   });});
   return processData({
     sales: sales,

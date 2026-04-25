@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>S&M Dashboard — FY 2026-27</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+
+:root{--bg:#060d1a;--surface:#0d1b2e;--card:#111f35;--card2:#162540;--border:#1e3355;--border2:#243d63;--amber:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;--text:#e2e8f0;--muted:#64748b;--head:#f8fafc}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13.5px;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 0%,#1e3a5f22,transparent 55%),radial-gradient(ellipse at 85% 100%,#f59e0b0d,transparent 55%);pointer-events:none;z-index:0}
+.nav{position:sticky;top:0;z-index:200;background:#060d1acc;backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 18px;height:52px;display:flex;align-items:center;gap:4px}
+.brand{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--amber);margin-right:16px;white-space:nowrap;letter-spacing:1px}
+.brand span{color:var(--muted);font-size:11px;font-family:'Outfit',sans-serif;font-weight:400;margin-left:5px}
+.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:5px 13px;border-radius:6px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;transition:.15s;border:1px solid transparent}
+.tab:hover{color:var(--text);background:var(--card)}
+.tab.on{color:var(--amber);background:var(--card);border-color:var(--border2)}
+.nav-r{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.rbtn{background:var(--amber);color:#000;border:none;border-radius:7px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif}
+.rbtn:hover{background:#fbbf24}.rbtn:disabled{opacity:.5;cursor:wait}
+.status{font-size:11px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
+.dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+.dot.load{background:var(--amber);animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.page{display:none;padding:18px;max-width:1640px;margin:0 auto;position:relative;z-index:1}
+.page.on{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ebox{background:#ef444412;border:1px solid var(--red);border-radius:10px;padding:24px;color:var(--red);font-size:14px;margin:20px 0}
+.ebox h3{font-family:'Syne',sans-serif;margin-bottom:10px;font-size:18px}
+.ebox code{background:#ef444420;padding:3px 8px;border-radius:4px;font-family:monospace;font-size:13px;color:#fca5a5}
+.ebox .steps{margin-top:14px;color:var(--text);line-height:1.9;font-size:13px}
+.fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.fbar label{font-size:11px;color:var(--text);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+select{background-color:#1a2e4a !important;border:1.5px solid var(--amber);color:var(--text) !important;padding:8px 12px;border-radius:7px;font-size:12px;font-family:'Outfit',sans-serif;line-height:1.5;min-height:32px;outline:none;cursor:pointer;font-weight:600;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+select option{background-color:#1a2e4a !important;color:#ffffff !important;font-weight:500}
+select:focus{border-color:var(--amber);box-shadow:0 0 0 2px #f59e0b33}
+select:focus{border-color:var(--amber)}
+.st{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--head);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.stbar{width:3px;height:15px;background:var(--amber);border-radius:2px;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.gf{margin-bottom:14px}
+@media(max-width:860px){.g2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px}
+.krow{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-bottom:14px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 15px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--kc,var(--amber)),transparent);opacity:.7}
+.klabel{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.kval{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--head);line-height:1}
+.ksub{font-size:11px;color:var(--muted);margin-top:3px}
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--surface);color:var(--muted);font-weight:600;padding:8px 11px;text-align:center;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
+td{padding:7px 11px;text-align:center;border-bottom:1px solid #0f1e33;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#ffffff06}
+.tl{text-align:left!important;font-weight:600}
+tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--border2)}
+.flag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.gr{background:#10b98118;color:var(--green);border:1px solid #10b98130}
+.yw{background:#f59e0b18;color:var(--amber);border:1px solid #f59e0b30}
+.rd{background:#ef444418;color:var(--red);border:1px solid #ef444430}
+.pb{background:#0f1e33;border-radius:20px;height:6px;overflow:hidden}
+.pf{height:100%;border-radius:20px;transition:width .5s ease}
+.barchart{display:flex;align-items:flex-end;gap:3px;height:190px}
+.bgroup{flex:1;display:flex;flex-direction:column;align-items:center}
+.bpair{display:flex;align-items:flex-end;gap:2px;height:165px;position:relative}
+.bar{border-radius:4px 4px 0 0;min-width:16px;width:16px;transition:height .5s ease;position:relative}
+.bar-label{font-size:9px;font-weight:700;margin-bottom:3px;white-space:nowrap}
+.blabel{font-size:10px;color:#94a3b8;margin-top:5px;text-align:center;white-space:nowrap}
+.hcell{padding:6px 2px;border-radius:5px;text-align:center;font-size:11px;font-weight:600;flex:1;min-width:36px}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+
+/* ── LOGIN SCREEN ── */
+.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+.login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:100%;max-width:420px;box-shadow:0 20px 60px #000a}
+.login-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
+.login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:32px}
+.login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.login-input{width:100%;background:#0d1b2e;border:1.5px solid var(--border2);color:#fff;padding:11px 14px;border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;margin-bottom:16px;transition:.2s}
+.login-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
+.login-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;transition:.2s;margin-top:4px}
+.login-btn:hover{background:#fbbf24;transform:translateY(-1px)}
+.login-btn:disabled{opacity:.5;cursor:wait;transform:none}
+.login-err{background:#ef444415;border:1px solid #ef444440;color:var(--red);border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;display:none}
+.login-loading{text-align:center;color:var(--muted);font-size:13px;margin-top:12px;display:none}
+.login-lock{font-size:48px;text-align:center;margin-bottom:16px}
+.login-footer{text-align:center;font-size:10px;color:var(--muted);margin-top:20px;opacity:.5}
+
+/* ── MAIN APP (hidden until login) ── */
+#app{display:none}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.shake{animation:shake .4s ease}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══════════════════════════════════════════ -->
+<div class="login-overlay" id="loginScreen">
+  <div class="login-box" id="loginBox">
+    <div class="login-lock">🔐</div>
+    <div class="login-logo">S&M DASHBOARD</div>
+    <div class="login-sub">FY 2026-27 &nbsp;|&nbsp; Secure Access Required</div>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-label">Username</div>
+    <input class="login-input" id="loginUser" type="text" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-label">Password</div>
+    <input class="login-input" id="loginPass" type="password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="login-loading" id="loginLoading">⏳ Verifying &amp; loading data…</div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
+    <div class="login-footer">All financial data is AES-256 encrypted.<br/>Your password never leaves this browser.</div>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══════════════════════════════════════════════ -->
+<div id="app">
+<nav class="nav">
+  <div class="brand">S&M <span>FY 2026-27</span></div>
+  <div class="tabs">
+    <div class="tab on"  onclick="nav('overview',this)">Overview</div>
+    <div class="tab" onclick="nav('projects',this)">Projects</div>
+    <div class="tab" onclick="nav('stm',this)">STM Wise</div>
+    <div class="tab" onclick="nav('meo',this)">MEO</div>
+    <div class="tab" onclick="nav('saletype',this)">Direct vs CP</div>
+    <div class="tab" onclick="nav('marketing',this)">Marketing</div>
+    <div class="tab" onclick="nav('yoy',this)">YoY Compare</div>
+    <div class="tab" onclick="nav('inventory',this)">Inventory</div>
+  </div>
+  <div class="nav-r">
+    <span class="status" id="status"><span class="dot load"></span>Loading…</span>
+    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Data</button><button class="rbtn" id="logoutBtn" onclick="doLogout()" style="display:none;background:#ef4444;margin-left:4px">⏻ Logout</button>
+  </div>
+</nav>
+<div id="page-overview"  class="page on"></div>
+<div id="page-projects"  class="page"></div>
+<div id="page-stm"       class="page"></div>
+<div id="page-meo"       class="page"></div>
+<div id="page-saletype"  class="page"></div>
+<div id="page-marketing" class="page"></div>
+<div id="page-yoy"       class="page"></div>
+<div id="page-inventory" class="page"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+//  CONFIGURATION — CHANGE THESE
+// ═══════════════════════════════════════════════════════════
+
+// Paste your Google Sheet ID here (from the URL)
+// URL format: https://docs.google.com/spreadsheets/d/SHEET_ID/edit
+var GOOGLE_SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
+
+// Login credentials (username → decryption password mapping)
+// Add as many users as you want
+// IMPORTANT: The password here MUST match what you used in encrypt_data.js
+var USERS = {
+  'admin':   '123456',   // full access
+  'manager': '123456',   // same data, different user
+  // 'viewer':  'DifferentPassword456!'  // could use different encryption
+};
+
+// ═══════════════════════════════════════════════════════════
+//  AES-256-GCM DECRYPTION (runs in browser, no server needed)
+// ═══════════════════════════════════════════════════════════
+
+async function deriveKey(password, saltHex) {
+  // PBKDF2 — MUST match encrypt_data.js exactly: same iterations, same hash
+  const saltBytes = typeof saltHex === 'string' ? hexToBytes(saltHex) : saltHex;
+  const passBytes = new TextEncoder().encode(password);
+  const baseKey = await crypto.subtle.importKey('raw', passBytes, 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt:saltBytes, iterations:100000, hash:'SHA-256'},
+    baseKey,
+    {name:'AES-GCM', length:256},
+    false,
+    ['decrypt']
+  );
+}
+
+async function decryptData(encryptedHex, password) {
+  try {
+    // Parse: salt(16 bytes=32 hex) + iv(12 bytes=24 hex) + authTag(16 bytes=32 hex) + data
+    // MUST match encrypt_data.js packing order exactly
+    const saltHex    = encryptedHex.substring(0, 32);   // 16 bytes
+    const ivHex      = encryptedHex.substring(32, 56);  // 12 bytes
+    const authTagHex = encryptedHex.substring(56, 88);  // 16 bytes
+    const dataHex    = encryptedHex.substring(88);       // rest
+
+    const saltBytes2  = hexToBytes(saltHex);
+    const key        = await deriveKey(password, saltBytes2);
+    const iv         = hexToBytes(ivHex);
+    // AES-GCM: concatenate ciphertext + authTag for Web Crypto API
+    const ciphertext = hexToBytes(dataHex + authTagHex);
+
+    const decrypted  = await crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, ciphertext);
+    return new TextDecoder().decode(decrypted);
+  } catch(e) {
+    throw new Error('Decryption failed — wrong password');
+  }
+}
+
+function hexToBytes(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2)
+    bytes[i/2] = parseInt(hex.substring(i, i+2), 16);
+  return bytes;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FETCH FROM GOOGLE SHEETS (public read, encrypted values)
+// ═══════════════════════════════════════════════════════════
+
+async function fetchEncryptedFromSheets() {
+  // Google Sheets JSON API — reads the EncryptedData sheet
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + GOOGLE_SHEET_ID +
+            '/values/EncryptedData!A:B?key=AIzaSyD_placeholder';
+
+  // Use the public CSV export as fallback (no API key needed if sheet is public)
+  var csvUrl = 'https://docs.google.com/spreadsheets/d/' + GOOGLE_SHEET_ID +
+               '/gviz/tq?tqx=out:csv&sheet=EncryptedData';
+
+  var res = await fetch(csvUrl);
+  if (!res.ok) throw new Error('Could not fetch from Google Sheets. Make sure sheet is public.');
+  var csv = await res.text();
+
+  // Parse CSV: key,value rows
+  var rows = csv.trim().split('\n').map(function(row) {
+    // Handle quoted CSV values
+    var match = row.match(/^"?([^",]*)"?,"?([^"]*)"?$/);
+    if (!match) {
+      // Handle multiline quoted values
+      var parts = row.split(',');
+      return [parts[0].replace(/"/g,'').trim(), parts.slice(1).join(',').replace(/^"|"$/g,'').trim()];
+    }
+    return [match[1].trim(), match[2].trim()];
+  });
+
+  var map = {};
+  rows.forEach(function(r) { if(r[0]) map[r[0]] = r[1]; });
+
+  var totalChunks = parseInt(map['total_chunks'] || map['TOTAL_CHUNKS'] || '1');
+  var encrypted = '';
+  for (var i = 1; i <= totalChunks; i++) {
+    encrypted += (map['CHUNK_' + i] || '');
+  }
+
+  if (!encrypted) throw new Error('No encrypted data found in Google Sheets.');
+  return encrypted;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════════════════
+
+var currentDecryptionPassword = null;
+var cachedDecryptedData = null;
+
+async function doLogin() {
+  var username = document.getElementById('loginUser').value.trim();
+  var password = document.getElementById('loginPass').value;
+
+  if (!username || !password) {
+    showLoginErr('Please enter username and password');
+    return;
+  }
+
+  // Check credentials
+  if (!USERS[username] || USERS[username] !== password) {
+    showLoginErr('Invalid username or password');
+    document.getElementById('loginBox').classList.add('shake');
+    setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 500);
+    return;
+  }
+
+  currentDecryptionPassword = password;
+
+  // Show loading
+  document.getElementById('loginBtn').disabled = true;
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('loginLoading').style.display = 'block';
+  document.getElementById('loginBtn').textContent = 'Loading…';
+
+  try {
+    // Check if Google Sheet ID is configured
+    if (GOOGLE_SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
+      // Demo mode — load with demo data
+      await loadDemoData();
+    } else {
+      // Real mode — fetch from Google Sheets
+      var encryptedHex = await fetchEncryptedFromSheets();
+      var decryptedJson = await decryptData(encryptedHex, currentDecryptionPassword);
+      var rawData = JSON.parse(decryptedJson);
+      D = processData(rawData);
+    }
+
+    // Success — show app
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('reloadBtn').style.display = 'inline-block';
+    document.getElementById('logoutBtn').style.display = 'inline-block';
+    document.getElementById('status').innerHTML = '<span class="dot ok"></span>Decrypted &amp; Live';
+
+    buildFilters();
+    render(currentPage);
+
+  } catch(e) {
+    showLoginErr('Error: ' + e.message);
+    document.getElementById('loginLoading').style.display = 'none';
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'SIGN IN →';
+  }
+}
+
+function showLoginErr(msg) {
+  var el = document.getElementById('loginErr');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function doLogout() {
+  // Clear all sensitive data from memory
+  D = null;
+  cachedDecryptedData = null;
+  currentDecryptionPassword = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').textContent = 'SIGN IN →';
+  document.getElementById('loginLoading').style.display = 'none';
+  document.getElementById('loginErr').style.display = 'none';
+  document.getElementById('reloadBtn').style.display = 'none';
+  document.getElementById('logoutBtn').style.display = 'none';
+}
+
+async function reloadData() {
+  document.getElementById('reloadBtn').disabled = true;
+  document.getElementById('status').innerHTML = '<span class="dot load"></span>Refreshing…';
+  try {
+    if (GOOGLE_SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
+      await loadDemoData();
+    } else {
+      var encryptedHex = await fetchEncryptedFromSheets();
+      var decryptedJson = await decryptData(encryptedHex, currentDecryptionPassword);
+      var rawData = JSON.parse(decryptedJson);
+      D = processData(rawData);
+    }
+    document.getElementById('status').innerHTML = '<span class="dot ok"></span>Updated · ' + new Date().toLocaleTimeString();
+    buildFilters();
+    render(currentPage);
+  } catch(e) {
+    document.getElementById('status').innerHTML = '<span class="dot err"></span>' + e.message;
+  } finally {
+    document.getElementById('reloadBtn').disabled = false;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+//  DEMO MODE (when Google Sheet ID not yet configured)
+// ═══════════════════════════════════════════════════════════
+
+async function loadDemoData() {
+  var DEMO_PROJECTS = ['KALRAV','ORAN','SCULPTURE AI','ANAHATA','WAGHODIYA','TUNDAV','BK1'];
+  var DEMO_MONTHS   = ['April','May','June','July','August','September','October','November','December','January','February','March'];
+  var DEMO_STMS     = ['Rachit','Dilpesh','Nikhil','Vinay','Anand','Het','Sachin','Nikhil Patil','Akash','Daksh','Kunal'];
+
+  var sales = [];
+  var aprilTargets = {KALRAV:9, ORAN:1.8, 'SCULPTURE AI':1.4, ANAHATA:4.2, WAGHODIYA:0.6, TUNDAV:2.0, BK1:2.6};
+  var aprilActuals = {KALRAV:7.1, ORAN:0.8, 'SCULPTURE AI':0, ANAHATA:2.99, WAGHODIYA:0, TUNDAV:0.71, BK1:1.3};
+
+  DEMO_PROJECTS.forEach(function(p) {
+    ['April','May','June'].forEach(function(m) {
+      var tgt = aprilTargets[p] || 1;
+      sales.push({Month:m, Project_name:p, Stm_name:'Kunal', Sales_type:'CP',
+        Target: parseFloat((tgt*0.4).toFixed(2)),
+        Actual: m==='April' ? parseFloat((aprilActuals[p]*0.4||0).toFixed(2)) : 0});
+      sales.push({Month:m, Project_name:p, Stm_name:'Nikhil', Sales_type:'Direct',
+        Target: parseFloat((tgt*0.6).toFixed(2)),
+        Actual: m==='April' ? parseFloat((aprilActuals[p]*0.6||0).toFixed(2)) : 0});
+    });
+  });
+
+  var rawData = {
+    sales: sales,
+    meo: DEMO_PROJECTS.map(function(p) {
+      return {'Project Name':p, 'Target (Current Month)':aprilTargets[p]||1,
+              'Actual till Date':aprilActuals[p]||0, 'Expected Closing': parseFloat((Math.random()*3+0.5).toFixed(1))};
+    }),
+    inventory: DEMO_PROJECTS.map(function(p) {
+      return {'Project Name':p, Total_units:70, Units_sold:Math.floor(Math.random()*30+30), Units_Available:0, Potential:5};
+    }).map(function(r) { r.Units_Available = r.Total_units - r.Units_sold; return r; }),
+    marketing: ['April','May','June'].flatMap(function(m) {
+      return DEMO_PROJECTS.map(function(p) {
+        return {Month:m, Project_Name:p,
+          MQL_Target:500, MQL_Actual:m==='April'?Math.floor(Math.random()*400+100):0,
+          SQL_Target:100, SQL_Actual:m==='April'?Math.floor(Math.random()*80+20):0,
+          SV_Target:30, SV_Actual:m==='April'?Math.floor(Math.random()*25+5):0,
+          Closures_Target:3, Closures_Actual:0};
+      });
+    }),
+    salesPY: DEMO_PROJECTS.flatMap(function(p) {
+      return ['April','May','June'].map(function(m) {
+        return {Month:m, Project_Name:p, Actual: parseFloat((Math.random()*5+1).toFixed(2))};
+      });
+    }),
+  };
+
+  D = processData(rawData);
+  document.getElementById('status').innerHTML = '<span class="dot ok" style="background:var(--amber)"></span>Demo Mode';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  CORE DATA STATE
+// ═══════════════════════════════════════════════════════════
+var D = null;
+var currentPage = 'overview';
+var MONTH_ORDER = ['April','May','June','July','August','September','October','November','December','January','February','March'];
+
+// ═══════════════════════════════════════════════════════════
+//  PROCESS DATA (unchanged from original)
+// ═══════════════════════════════════════════════════════════
+function processData(raw){
+  var sales=raw.sales.map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_name||'').trim(),stm:(r.Stm_name||'').trim(),type:(r.Sales_type||'').trim(),target:+r.Target||0,actual:+r.Actual||0};});
+  var meo=raw.meo.map(function(r){return{project:(r['Project Name']||'').trim(),target:+r['Target (Current Month)']||0,actual:+r['Actual till Date']||0,expected:+r['Expected Closing']||0};});
+  var inventory=raw.inventory.map(function(r){return{project:(r['Project Name']||'').trim(),total:+r['Total_units']||0,sold:+r['Units_sold']||0,available:+r['Units_Available']||0,potential:+r['Potential']||0};});
+  var marketing=raw.marketing.map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),mqlT:+r.MQL_Target||0,mqlA:+r.MQL_Actual||0,sqlT:+r.SQL_Target||0,sqlA:+r.SQL_Actual||0,svT:+r.SV_Target||0,svA:+r.SV_Actual||0,clT:+r.Closures_Target||0,clA:+r.Closures_Actual||0};});
+  var salesPY=raw.salesPY.map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),actual:+r.Actual||0};});
+  var projects=[...new Set(sales.map(function(r){return r.project;}))].filter(Boolean).sort();
+  var stms=[...new Set(sales.map(function(r){return r.stm;}))].filter(Boolean).sort();
+  var months=MONTH_ORDER.filter(function(m){return sales.some(function(r){return r.month===m;});});
+  return{sales,meo,inventory,marketing,salesPY,projects,stms,months};
+}
+
+// ═══════════════════════════════════════════════════════════
+//  ALL RENDER FUNCTIONS (unchanged from original)
+// ═══════════════════════════════════════════════════════════
+
+var sum=function(arr,f){return arr.reduce(function(s,r){return s+(r[f]||0);},0);};
+var pct=function(a,b){return b>0?Math.round(a/b*100):0;};
+var gf=function(p){return p>=80?'gr':p>=50?'yw':'rd';};
+var fi=function(p){return p>=80?'🟢':p>=50?'🟡':'🔴';};
+var flag=function(p,l){return '<span class="flag '+gf(p)+'">'+fi(p)+' '+(l!=null?l:p+'%')+'</span>';};
+var cr=function(v){return v>0?'₹'+parseFloat(v).toFixed(2):'—';};
+var pb=function(p){var c=p>=80?'var(--green)':p>=50?'var(--amber)':'var(--red)';return '<div class="pb"><div class="pf" style="width:'+Math.min(p,100)+'%;background:'+c+'"></div></div>';};
+var kpi=function(label,val,sub,color){return '<div class="kpi" style="--kc:'+(color||'var(--amber)')+'"><div class="klabel">'+label+'</div><div class="kval">'+val+'</div><div class="ksub">'+sub+'</div></div>';};
+
+var FILTER_STATE={};
+
+function flt(month,project,type){
+  return D.sales.filter(function(r){
+    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project)&&(type==='all'||!type||r.type===type);
+  });
+}
+function pyFor(month,project){
+  return D.salesPY.filter(function(r){
+    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);
+  }).reduce(function(s,r){return s+r.actual;},0);
+}
+function mktFlt(month,project){
+  return D.marketing.filter(function(r){
+    return (month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);
+  });
+}
+function groupBy(arr,key){return arr.reduce(function(acc,r){var k=r[key];(acc[k]=acc[k]||[]).push(r);return acc;},{});}
+function sel(id){
+  var el=document.getElementById(id);
+  var value=(el&&el.value)?el.value:'';
+  if(value) FILTER_STATE[id]=value;
+  return value||FILTER_STATE[id]||'all';
+}
+
+function setStatus(state,msg){var cls={ok:'ok',err:'err',load:'load'}[state];document.getElementById('status').innerHTML='<span class="dot '+cls+'"></span>'+msg;}
+function showError(msg){document.querySelectorAll('.page').forEach(function(p){p.innerHTML='<div class="ebox"><h3>⚠ Cannot Load Data</h3>'+msg+'</div>';});}
+
+function nav(name,el){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
+  document.getElementById('page-'+name).classList.add('on');
+  el.classList.add('on');
+  currentPage=name;
+  if(D)render(name);
+}
+function render(name){var fn={overview:ovR,projects:prR,stm:stmR,meo:meoR,saletype:scR,marketing:mktR,yoy:yoyR,inventory:invR};if(fn[name])fn[name]();}
+
+function buildFilters(){
+  document.querySelectorAll('[data-type="month"]').forEach(function(el){
+    var v=FILTER_STATE[el.id]||el.value||'all';
+    el.innerHTML='<option value="all">All Months</option>'+D.months.map(function(m){return '<option value="'+m+'">'+m+'</option>';}).join('');
+    el.value=v;
+    if(!el.value){
+      var selected=Array.from(el.options).find(function(o){return o.text===v;});
+      el.value=selected?selected.value:'all';
+    }
+    FILTER_STATE[el.id]=el.value;
+  });
+  document.querySelectorAll('[data-type="project"]').forEach(function(el){
+    var v=FILTER_STATE[el.id]||el.value||'all';
+    el.innerHTML='<option value="all">All Projects</option>'+D.projects.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('');
+    el.value=v;
+    if(!el.value){
+      var selected=Array.from(el.options).find(function(o){return o.text===v;});
+      el.value=selected?selected.value:'all';
+    }
+    FILTER_STATE[el.id]=el.value;
+  });
+}
+
+// ── OVERVIEW ──
+function ovR(){
+  var month=sel('ov_month'),project=sel('ov_proj'),data=flt(month,project);
+  var totT=sum(data,'target'),totA=sum(data,'actual'),py=pyFor(month,project),achP=pct(totA,totT);
+  var meoTotA=D.meo.reduce(function(s,m){return s+m.actual;},0);
+  var dA=sum(flt(month,project,'Direct'),'actual');
+  document.getElementById('page-overview').innerHTML=
+    '<div class="fbar"><label>Month</label><select data-type="month" id="ov_month" onchange="ovR()"></select>'+
+    '<label>Project</label><select data-type="project" id="ov_proj" onchange="ovR()"></select></div>'+
+    '<div class="krow">'+
+      kpi('FY27 Target',cr(totT)+'Cr','Total target','var(--amber)')+
+      kpi('FY27 Actual',cr(totA)+'Cr',achP+'% achieved',achP>=80?'var(--green)':achP>=50?'var(--amber)':'var(--red)')+
+      kpi('FY26 Actual PY',cr(py)+'Cr','Last year','var(--purple)')+
+      kpi('Shortfall',cr(Math.max(totT-totA,0))+'Cr',totA>=totT?'✓ Met':'Remaining',totA>=totT?'var(--green)':'var(--red)')+
+      kpi('MEO Pipeline',cr(meoTotA)+'Cr','All projects today','var(--cyan)')+
+      kpi('Direct %',pct(dA,totA||1)+'%','of actual sales','var(--blue)')+
+    '</div>'+
+    '<div class="g2">'+
+      '<div class="card gf"><div class="st"><div class="stbar"></div>Monthly — Target vs Actual vs PY (₹Cr)</div>'+
+      monthBarChart(project)+
+      '<div style="display:flex;gap:12px;margin-top:8px;font-size:11px">'+
+        '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px"></span>Target</span>'+
+        '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>Actual</span>'+
+        '<span><span style="display:inline-block;width:10px;height:10px;background:#4b5563;border-radius:2px;margin-right:4px"></span>PY</span></div></div>'+
+      '<div class="card gf"><div class="st"><div class="stbar"></div>Project Flag Status</div>'+
+        D.projects.map(function(p){
+          var pd=flt(month,p),t=sum(pd,'target'),a=sum(pd,'actual'),p2=pct(a,t);
+          return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)">'+
+            '<span style="min-width:110px;font-weight:600;font-size:12px">'+p+'</span>'+
+            '<div style="flex:1">'+pb(p2)+'</div>'+
+            '<span style="min-width:65px;text-align:right">'+flag(p2)+'</span>'+
+            '<span style="min-width:80px;text-align:right;font-size:11px;color:var(--muted)">'+cr(a)+'/'+cr(t)+'</span></div>';
+        }).join('')+'</div></div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Achievement Heatmap</div>'+
+    '<div style="overflow-x:auto"><div style="display:table;width:100%;min-width:100%">'+
+    '<div style="display:flex;gap:4px;margin-bottom:5px;align-items:center;width:100%">'+
+    '<div style="min-width:110px"></div>'+
+    D.months.map(function(m){return '<div class="hcell" style="color:var(--muted);font-size:10px;font-weight:400">'+m.slice(0,3)+'</div>';}).join('')+
+    '<div class="hcell" style="min-width:52px;color:var(--muted);font-size:10px">Total</div></div>'+
+    D.projects.map(function(p){
+      var cells=D.months.map(function(m){
+        var d=flt(m,p),t=sum(d,'target'),a=sum(d,'actual');
+        if(!t&&!a)return '<div class="hcell" style="background:#0f1e33;color:var(--muted)">—</div>';
+        var p2=pct(a,t),bg=p2>=80?'#10b98128':p2>=50?'#f59e0b28':'#ef444428',fc=p2>=80?'var(--green)':p2>=50?'var(--amber)':'var(--red)';
+        return '<div class="hcell" style="background:'+bg+';color:'+fc+'" title="'+m+': T='+t.toFixed(1)+' A='+a.toFixed(1)+'">'+p2+'%</div>';
+      }).join('');
+      var td=flt('all',p),tt=sum(td,'target'),ta=sum(td,'actual'),tp=pct(ta,tt);
+      var tbg=tp>=80?'#10b98138':tp>=50?'#f59e0b38':'#ef444438',tfc=tp>=80?'var(--green)':tp>=50?'var(--amber)':'var(--red)';
+      return '<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;width:100%">'+
+        '<div style="min-width:110px;font-size:12px;font-weight:600">'+p+'</div>'+cells+
+        '<div class="hcell" style="min-width:52px;background:'+tbg+';color:'+tfc+';font-weight:700">'+tp+'%</div></div>';
+    }).join('')+'</div></div></div>';
+  buildFilters();
+}
+
+function monthBarChart(project){
+  var vals=D.months.map(function(m){return{m:m,t:sum(flt(m,project||'all'),'target'),a:sum(flt(m,project||'all'),'actual'),py:pyFor(m,project||'all')};});
+  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.t,v.a,v.py);}));
+  if(maxV<=0)maxV=1;
+  var H=160;
+  return '<div class="barchart" style="height:'+(H+30)+'px;align-items:flex-end">'+vals.map(function(v){
+    var ht=Math.max(v.t>0?Math.round(v.t/maxV*H):0,2),ha=Math.max(v.a>0?Math.round(v.a/maxV*H):0,2),hp=Math.max(v.py>0?Math.round(v.py/maxV*H):0,2);
+    var tLabel=v.t>0?v.t.toFixed(1):'';
+    var aLabel=v.a>0?v.a.toFixed(1):'';
+    var pyLabel=v.py>0?v.py.toFixed(1):'';
+    return '<div class="bgroup" style="align-items:center">'+
+      '<div class="bpair" style="height:'+H+'px;align-items:flex-end;gap:3px">'+
+      (v.t>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+        '<div style="font-size:8.5px;color:var(--amber);font-weight:700;margin-bottom:2px;white-space:nowrap">'+tLabel+'</div>'+
+        '<div style="height:'+ht+'px;width:14px;background:var(--amber);opacity:.85;border-radius:3px 3px 0 0" title="'+v.m+' Target: '+v.t.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
+      (v.a>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+        '<div style="font-size:8.5px;color:var(--blue);font-weight:700;margin-bottom:2px;white-space:nowrap">'+aLabel+'</div>'+
+        '<div style="height:'+ha+'px;width:14px;background:var(--blue);border-radius:3px 3px 0 0" title="'+v.m+' Actual: '+v.a.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
+      (v.py>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+        '<div style="font-size:8.5px;color:#9ca3af;font-weight:700;margin-bottom:2px;white-space:nowrap">'+pyLabel+'</div>'+
+        '<div style="height:'+hp+'px;width:14px;background:#4b5563;border-radius:3px 3px 0 0" title="'+v.m+' PY: '+v.py.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
+      '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
+  }).join('')+'</div>';
+}
+
+// ── PROJECTS ──
+function prR(){
+  var project=sel('pr_proj'),month=sel('pr_month'),projs=project==='all'?D.projects:[project];
+  var pColors=['var(--amber)','var(--blue)','var(--green)','var(--purple)','var(--cyan)','var(--red)','#6366f1'];
+  document.getElementById('page-projects').innerHTML=
+    '<div class="fbar"><label>Project</label><select data-type="project" id="pr_proj" onchange="prR()"></select>'+
+    '<label>Month</label><select data-type="month" id="pr_month" onchange="prR()"></select></div>'+
+    projs.map(function(p,pi){
+      var months=month==='all'?D.months:[month];
+      var allD=flt('all',p),totT=sum(allD,'target'),totA=sum(allD,'actual'),totP=pct(totA,totT),pyTot=pyFor('all',p);
+      var rows=months.map(function(m){
+        var d=flt(m,p),t=sum(d,'target'),a=sum(d,'actual'),py=pyFor(m,p),p2=pct(a,t);
+        var bg=a>0?(p2>=80?'#10b98108':p2>=50?'#f59e0b08':'#ef444408'):'';
+        var grP=py>0?Math.round((a-py)/py*100):0;
+        return '<tr style="background:'+bg+'">'+
+          '<td class="tl">'+m+'</td>'+
+          '<td style="color:#8b5cf6">'+( py>0?cr(py)+'Cr':'—')+'</td>'+
+          '<td style="color:var(--amber);font-weight:600">'+(t>0?cr(t)+'Cr':'—')+'</td>'+
+          '<td style="color:var(--blue)">'+(a>0?cr(a)+'Cr':'—')+'</td>'+
+          '<td>'+(t>0?flag(p2):'—')+'</td>'+
+          '<td style="color:var(--red)">'+(t>0&&a<t&&a>0?cr(t-a)+'Cr':(a>=t&&t>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td>'+
+          '<td>'+(py>0&&a>0?'<span style="color:'+(a>=py?'var(--green)':'var(--red)')+'">vs PY '+(a>=py?'▲':'▼')+Math.abs(grP)+'%</span>':'—')+'</td>'+
+          '</tr>';
+      }).join('');
+      return '<div class="card gf" style="border-top:2px solid '+pColors[pi%pColors.length]+'">'+
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">'+
+        '<div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:800">'+p+'</div>'+
+        '<div style="font-size:11px;color:var(--muted)">FY26 Actual (PY): '+cr(pyTot)+'Cr</div></div>'+
+        '<div style="margin-left:auto;display:flex;gap:8px">'+kpi('FY27 Target',cr(totT)+'Cr','','var(--amber)')+kpi('FY27 Actual',cr(totA)+'Cr',totP+'%',totP>=80?'var(--green)':totP>=50?'var(--amber)':'var(--red)')+'</div></div>'+
+        '<div class="tw"><table>'+
+        '<thead><tr><th>Month</th><th>FY26 PY Actual</th><th>FY27 Target</th><th>FY27 Actual</th><th>% Ach</th><th>Shortfall</th><th>vs PY</th></tr></thead>'+
+        '<tbody>'+rows+'</tbody>'+
+        '<tfoot><tr><td class="tl">TOTAL</td><td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td><td style="color:var(--amber)">'+cr(totT)+'Cr</td><td style="color:var(--blue)">'+cr(totA)+'Cr</td><td>'+flag(totP)+'</td><td style="color:var(--red)">'+(totT>totA?cr(totT-totA)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td><td></td></tr></tfoot>'+
+        '</table></div></div>';
+    }).join('');
+  buildFilters();
+}
+
+// ── STM ──
+function stmR(){
+  var project=sel('stm_proj'),month=sel('stm_month'),type=sel('stm_type'),data=flt(month,project,type);
+  var bySTM=Object.entries(groupBy(data,'stm')).map(function(e){return{stm:e[0],type:e[1][0].type,t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
+  var maxV=Math.max.apply(null,bySTM.map(function(s){return Math.max(s.t,s.a);}));if(maxV<=0)maxV=1;
+  var totT=sum(data,'target'),totA=sum(data,'actual');
+  var tableRows=Object.entries(groupBy(flt(month,project,type),'stm')).filter(function(e){return e[1].some(function(r){return r.target>0||r.actual>0;});}).map(function(e){
+    var stm=e[0],rows=e[1],t=sum(rows,'target'),a=sum(rows,'actual'),p2=pct(a,t),stype=rows[0].type;
+    var projs=[...new Set(rows.map(function(r){return r.project;}))].join(', ');
+    var bg=a>0?(p2>=80?'#10b98108':p2>=50?'#f59e0b08':'#ef444408'):'';
+    return '<tr style="background:'+bg+'">'+
+      '<td class="tl">'+stm+'</td><td style="font-size:11px;color:var(--muted)">'+projs+'</td>'+
+      '<td><span style="color:'+(stype==='CP'?'var(--blue)':'var(--green)')+';font-size:11px;font-weight:600">'+stype+'</span></td>'+
+      '<td style="color:var(--amber)">'+cr(t)+'Cr</td><td style="color:var(--blue)">'+cr(a)+'Cr</td>'+
+      '<td>'+flag(p2)+'</td>'+
+      '<td style="color:var(--red)">'+(t>a?cr(t-a)+'Cr':(a>=t&&t>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td></tr>';
+  }).join('');
+  document.getElementById('page-stm').innerHTML=
+    '<div class="fbar"><label>Project</label><select data-type="project" id="stm_proj" onchange="stmR()"></select>'+
+    '<label>Month</label><select data-type="month" id="stm_month" onchange="stmR()"></select>'+
+    '<label>Type</label><select id="stm_type" onchange="stmR()"><option value="all">All</option><option value="Direct">Direct</option><option value="CP">CP</option></select></div>'+
+    '<div class="g2 gf">'+
+    '<div class="card"><div class="st"><div class="stbar"></div>STM Performance</div>'+
+    (bySTM.length?bySTM.map(function(s){
+      var p2=pct(s.a,s.t),tc=s.type==='CP'?'var(--blue)':'var(--green)';
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">'+
+        '<div style="min-width:85px"><div style="font-weight:600;font-size:12px">'+s.stm+'</div><div style="font-size:10px;color:'+tc+'">'+s.type+'</div></div>'+
+        '<div style="flex:1">'+pb(p2)+'</div>'+
+        '<div style="min-width:90px;text-align:right;font-size:11px"><div style="color:var(--amber)">T: '+cr(s.t)+'</div><div style="color:var(--blue)">A: '+cr(s.a)+'</div></div>'+
+        flag(p2)+'</div>';
+    }).join(''):'<div style="color:var(--muted);padding:20px;text-align:center">No data for selected filters</div>')+
+    '</div>'+
+    '<div class="card"><div class="st"><div class="stbar"></div>Target vs Actual Bars</div>'+
+    '<div class="barchart">'+
+    (bySTM.length?bySTM.map(function(s){
+      var ht=Math.round(s.t/maxV*90),ha=Math.round(s.a/maxV*90);
+      return '<div class="bgroup"><div class="bpair">'+
+        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+          '<div class="bar-label" style="color:var(--amber)">'+cr(s.t)+'Cr</div>'+ 
+          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7" title="'+s.stm+' Target: '+s.t.toFixed(2)+'Cr"></div>'+ 
+        '</div>'+ 
+        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+          '<div class="bar-label" style="color:var(--blue)">'+cr(s.a)+'Cr</div>'+ 
+          '<div class="bar" style="height:'+ha+'px;background:var(--blue)" title="'+s.stm+' Actual: '+s.a.toFixed(2)+'Cr"></div>'+ 
+        '</div>'+ 
+        '</div><div class="blabel">'+s.stm.split(' ')[0]+'</div></div>';
+    }).join(''):'<div style="color:var(--muted);margin:auto">No data</div>')+
+    '</div></div></div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Full STM Table</div>'+
+    '<div class="tw"><table>'+
+    '<thead><tr><th>STM</th><th>Projects</th><th>Type</th><th>Target</th><th>Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
+    '<tbody>'+(tableRows||'<tr><td colspan="7" style="color:var(--muted);padding:20px">No data</td></tr>')+'</tbody>'+
+    '<tfoot><tr><td class="tl" colspan="3">TOTAL</td><td style="color:var(--amber)">'+cr(totT)+'Cr</td><td style="color:var(--blue)">'+cr(totA)+'Cr</td><td>'+flag(pct(totA,totT))+'</td><td style="color:var(--red)">'+(totT>totA?cr(totT-totA)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr></tfoot>'+
+    '</table></div></div>';
+  buildFilters();
+  var st=document.getElementById('stm_type');if(st&&type!=='all')st.value=type;
+}
+
+// ── MEO ──
+function meoR(){
+  var totT=D.meo.reduce(function(s,m){return s+m.target;},0);
+  var totA=D.meo.reduce(function(s,m){return s+m.actual;},0);
+  var totMeo=D.meo.reduce(function(s,m){return s+m.expected;},0);
+  var totSF=D.meo.reduce(function(s,m){return s+(m.actual+m.expected);},0);
+  var totAchBef=pct(totA,totT);
+  var totAchAft=pct(totSF,totT);
+
+  // Build table rows matching Excel: Project | Apr Tgt | Apr Act | % Bef | MEO Today | SF/Excess | % After
+  var rows=D.meo.map(function(m){
+    var achBef=pct(m.actual,m.target);
+    var sfExcess=m.actual+m.expected;        // "As per MEO SF / excess"
+    var achAft=m.target>0?Math.round(sfExcess/m.target*100):0;
+    var bfCol=achBef>=80?'var(--green)':achBef>=50?'var(--amber)':'var(--red)';
+    var afCol=achAft>=80?'var(--green)':achAft>=50?'var(--cyan)':'var(--amber)';
+
+    return '<tr>'+
+      '<td class="tl" style="font-weight:700">'+m.project+'</td>'+
+      '<td style="color:var(--amber);font-weight:600">'+m.target.toFixed(1)+'</td>'+
+      '<td style="color:var(--blue)">'+(m.actual>0?m.actual.toFixed(1):'—')+'</td>'+
+      '<td>'+
+        '<div style="display:flex;align-items:center;gap:6px">'+
+          '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
+            '<div style="height:100%;width:'+Math.min(achBef,100)+'%;background:'+bfCol+';border-radius:20px"></div>'+
+          '</div>'+
+          '<span style="color:'+bfCol+';font-weight:700;min-width:34px">'+achBef+'%</span>'+
+        '</div>'+
+      '</td>'+
+      '<td style="color:var(--cyan);font-weight:600">'+(m.expected>0?m.expected.toFixed(1):'—')+'</td>'+
+      '<td style="color:var(--purple);font-weight:600">'+sfExcess.toFixed(1)+'</td>'+
+      '<td>'+
+        '<div style="display:flex;align-items:center;gap:6px">'+
+          '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
+            '<div style="height:100%;width:'+Math.min(achAft,100)+'%;background:'+afCol+';border-radius:20px"></div>'+
+          '</div>'+
+          '<span style="color:'+afCol+';font-weight:700;min-width:38px">'+achAft+'%</span>'+
+        '</div>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+
+  // Total row
+  var bfColT=totAchBef>=80?'var(--green)':totAchBef>=50?'var(--amber)':'var(--red)';
+  var afColT=totAchAft>=80?'var(--green)':totAchAft>=50?'var(--cyan)':'var(--amber)';
+  var totalRow='<tr style="background:var(--surface);font-weight:700">'+
+    '<td class="tl" style="font-size:13px">TOTAL</td>'+
+    '<td style="color:var(--amber)">'+totT.toFixed(1)+'</td>'+
+    '<td style="color:var(--blue)">'+totA.toFixed(1)+'</td>'+
+    '<td>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+
+        '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
+          '<div style="height:100%;width:'+Math.min(totAchBef,100)+'%;background:'+bfColT+';border-radius:20px"></div>'+
+        '</div>'+
+        '<span style="color:'+bfColT+';font-weight:800;min-width:34px">'+totAchBef+'%</span>'+
+      '</div>'+
+    '</td>'+
+    '<td style="color:var(--cyan)">'+totMeo.toFixed(1)+'</td>'+
+    '<td style="color:var(--purple)">'+totSF.toFixed(1)+'</td>'+
+    '<td>'+
+      '<div style="display:flex;align-items:center;gap:6px">'+
+        '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
+          '<div style="height:100%;width:'+Math.min(totAchAft,100)+'%;background:'+afColT+';border-radius:20px"></div>'+
+        '</div>'+
+        '<span style="color:'+afColT+';font-weight:800;min-width:38px">'+totAchAft+'%</span>'+
+      '</div>'+
+    '</td>'+
+  '</tr>';
+
+  document.getElementById('page-meo').innerHTML=
+    '<div class="krow">'+
+    kpi('April Target',totT.toFixed(1)+'Cr','All projects','var(--amber)')+
+    kpi('April Actual',totA.toFixed(1)+'Cr',totAchBef+'% before MEO','var(--blue)')+
+    kpi('MEO as on Today',totMeo.toFixed(1)+'Cr','Pipeline','var(--cyan)')+
+    kpi('SF / Excess Total',totSF.toFixed(1)+'Cr','Actual + MEO','var(--purple)')+
+    kpi('% Ach After MEO',totAchAft+'%','With pipeline',totAchAft>=80?'var(--green)':totAchAft>=50?'var(--cyan)':'var(--amber)')+
+    '</div>'+
+    '<div class="card gf">'+
+    '<div class="st"><div class="stbar"></div>MEO AS ON TODAY</div>'+
+    '<div class="tw"><table>'+
+    '<thead>'+
+      '<tr style="background:#0d1b2e">'+
+        '<th style="text-align:left">Project</th>'+
+        '<th>April Target</th>'+
+        '<th>April Actual</th>'+
+        '<th>% Achievement Before</th>'+
+        '<th>MEO as on Today</th>'+
+        '<th>As per MEO SF / Excess</th>'+
+        '<th>% Achievement After</th>'+
+      '</tr>'+
+    '</thead>'+
+    '<tbody>'+rows+totalRow+'</tbody>'+
+    '</table></div></div>';
+}
+
+// ── DIRECT vs CP ──
+function scR(){
+  var month=sel('sc_month'),project=sel('sc_proj');
+  var direct=flt(month,project,'Direct'),cp=flt(month,project,'CP'),all=flt(month,project);
+  var dT=sum(direct,'target'),dA=sum(direct,'actual'),cT=sum(cp,'target'),cA=sum(cp,'actual'),tT=sum(all,'target'),tA=sum(all,'actual');
+  var dSTM=Object.entries(groupBy(direct,'stm')).map(function(e){return{stm:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
+  var cProj=Object.entries(groupBy(cp,'project')).map(function(e){return{proj:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;});
+  document.getElementById('page-saletype').innerHTML=
+    '<div class="fbar"><label>Month</label><select data-type="month" id="sc_month" onchange="scR()"></select>'+
+    '<label>Project</label><select data-type="project" id="sc_proj" onchange="scR()"></select></div>'+
+    '<div class="krow">'+
+    kpi('Direct Target',cr(dT)+'Cr',pct(dT,tT)+'% of total','var(--green)')+
+    kpi('Direct Actual',cr(dA)+'Cr',pct(dA,dT)+'% achieved','var(--green)')+
+    kpi('CP Target',cr(cT)+'Cr',pct(cT,tT)+'% of total','var(--blue)')+
+    kpi('CP Actual',cr(cA)+'Cr',pct(cA,cT)+'% achieved','var(--blue)')+
+    kpi('Direct % of Act',pct(dA,tA||1)+'%','vs CP '+pct(cA,tA||1)+'%','var(--cyan)')+
+    '</div>'+
+    '<div class="g2">'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Direct Sales — STM Wise</div>'+
+    '<div class="tw"><table><thead><tr><th>STM</th><th>Target</th><th>Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
+    '<tbody>'+dSTM.map(function(s){var p2=pct(s.a,s.t);return '<tr><td class="tl">'+s.stm+'</td><td style="color:var(--amber)">'+cr(s.t)+'Cr</td><td style="color:var(--green)">'+cr(s.a)+'Cr</td><td>'+flag(p2)+'</td><td style="color:var(--red)">'+(s.t>s.a?cr(s.t-s.a)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr>';}).join('')+'</tbody>'+
+    '<tfoot><tr><td class="tl">Total</td><td style="color:var(--amber)">'+cr(dT)+'Cr</td><td style="color:var(--green)">'+cr(dA)+'Cr</td><td>'+flag(pct(dA,dT))+'</td><td>'+(dT>dA?cr(dT-dA)+'Cr':'✓')+'</td></tr></tfoot>'+
+    '</table></div></div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>CP Sales — Kunal</div>'+
+    '<div class="tw"><table><thead><tr><th>Project</th><th>CP Target</th><th>CP Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
+    '<tbody>'+cProj.map(function(s){var p2=pct(s.a,s.t);return '<tr><td class="tl">'+s.proj+'</td><td style="color:var(--amber)">'+cr(s.t)+'Cr</td><td style="color:var(--blue)">'+cr(s.a)+'Cr</td><td>'+flag(p2)+'</td><td style="color:var(--red)">'+(s.t>s.a?cr(s.t-s.a)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr>';}).join('')+'</tbody>'+
+    '<tfoot><tr><td class="tl">Total</td><td style="color:var(--amber)">'+cr(cT)+'Cr</td><td style="color:var(--blue)">'+cr(cA)+'Cr</td><td>'+flag(pct(cA,cT))+'</td><td>'+(cT>cA?cr(cT-cA)+'Cr':'✓')+'</td></tr></tfoot>'+
+    '</table></div></div></div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Direct vs CP Split — Project Wise</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:6px">'+
+    D.projects.map(function(p){
+      var pd=flt(month,p,'Direct'),pc=flt(month,p,'CP');
+      var dTp=sum(pd,'target'),dAp=sum(pd,'actual'),cTp=sum(pc,'target'),cAp=sum(pc,'actual');
+      if(!dTp&&!cTp&&!dAp&&!cAp)return '';
+      var totAp=dAp+cAp,dp=totAp>0?Math.round(dAp/totAp*100):0;
+      return '<div class="card" style="background:var(--card2)">'+
+        '<div style="font-family:Syne,sans-serif;font-weight:700;font-size:14px;margin-bottom:9px">'+p+'</div>'+
+        '<div style="display:flex;gap:8px;margin-bottom:8px">'+
+        '<div style="flex:1;text-align:center;background:#10b98112;border-radius:6px;padding:5px"><div style="font-size:10px;color:var(--muted)">Direct</div><div style="font-weight:700;color:var(--green)">'+cr(dAp)+'Cr</div><div style="font-size:10px;color:var(--muted)">of '+cr(dTp)+'</div></div>'+
+        '<div style="flex:1;text-align:center;background:#3b82f612;border-radius:6px;padding:5px"><div style="font-size:10px;color:var(--muted)">CP</div><div style="font-weight:700;color:var(--blue)">'+cr(cAp)+'Cr</div><div style="font-size:10px;color:var(--muted)">of '+cr(cTp)+'</div></div>'+
+        '</div>'+
+        '<div style="height:9px;border-radius:5px;overflow:hidden;display:flex"><div style="width:'+dp+'%;background:var(--green)"></div><div style="flex:1;background:var(--blue)"></div></div>'+
+        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px"><span>Direct '+dp+'%</span><span>CP '+(100-dp)+'%</span></div></div>';
+    }).filter(Boolean).join('')+'</div></div>';
+  buildFilters();
+}
+
+// ── MARKETING ──
+function mktR(){
+  var month=sel('mk_month'),project=sel('mk_proj'),data=mktFlt(month,project);
+  var mqlT=data.reduce(function(s,r){return s+r.mqlT;},0),mqlA=data.reduce(function(s,r){return s+r.mqlA;},0);
+  var sqlT=data.reduce(function(s,r){return s+r.sqlT;},0),sqlA=data.reduce(function(s,r){return s+r.sqlA;},0);
+  var svT=data.reduce(function(s,r){return s+r.svT;},0),svA=data.reduce(function(s,r){return s+r.svA;},0);
+  var steps=[{l:'MQL (Leads)',t:mqlT,a:mqlA,c:'var(--blue)'},{l:'SQL (Qualified)',t:sqlT,a:sqlA,c:'var(--amber)'},{l:'Site Visits',t:svT,a:svA,c:'var(--green)'}];
+  var maxF=Math.max.apply(null,steps.map(function(s){return Math.max(s.t,s.a);}));if(maxF<=0)maxF=1;
+  var projMQL=D.projects.map(function(p){var pd=mktFlt(month,p);return{proj:p,t:pd.reduce(function(s,r){return s+r.mqlT;},0),a:pd.reduce(function(s,r){return s+r.mqlA;},0)};}).filter(function(d){return d.t>0||d.a>0;});
+  var maxPM=Math.max.apply(null,projMQL.map(function(d){return Math.max(d.t,d.a);}));if(maxPM<=0)maxPM=1;
+  document.getElementById('page-marketing').innerHTML=
+    '<div class="fbar"><label>Month</label><select data-type="month" id="mk_month" onchange="mktR()"></select>'+
+    '<label>Project</label><select data-type="project" id="mk_proj" onchange="mktR()"></select></div>'+
+    '<div class="krow">'+
+    kpi('MQL Target',mqlT.toLocaleString(),'Leads planned','var(--amber)')+
+    kpi('MQL Actual',mqlA.toLocaleString(),pct(mqlA,mqlT)+'% of target','var(--blue)')+
+    kpi('SQL Actual',sqlA.toLocaleString(),pct(sqlA,sqlT)+'% of target','var(--green)')+
+    kpi('Site Visits Act',svA.toLocaleString(),pct(svA,svT)+'% of target','var(--cyan)')+
+    kpi('MQL→SQL Rate',mqlA>0?pct(sqlA,mqlA)+'%':'—','Conversion','var(--purple)')+
+    '</div>'+
+    '<div class="g2">'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Marketing Funnel</div>'+
+    steps.map(function(s){
+      var tW=Math.round(s.t/maxF*100),aW=Math.round(s.a/maxF*100),p2=pct(s.a,s.t);
+      return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
+        '<div style="min-width:110px;font-size:12px;font-weight:500">'+s.l+'</div>'+
+        '<div style="flex:1;position:relative;height:16px;background:var(--border);border-radius:8px;overflow:hidden">'+
+        '<div style="position:absolute;height:100%;width:'+tW+'%;background:'+s.c+';opacity:.25;border-radius:8px"></div>'+
+        '<div style="position:absolute;height:100%;width:'+aW+'%;background:'+s.c+';border-radius:8px"></div></div>'+
+        '<div style="min-width:120px;text-align:right;font-size:11px"><span style="color:'+s.c+';font-weight:600">'+s.a.toLocaleString()+'</span>'+
+        '<span style="color:var(--muted)"> / '+s.t.toLocaleString()+'</span> &nbsp;'+flag(p2)+'</div></div>';
+    }).join('')+'</div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>MQL by Project</div>'+
+    '<div class="barchart" style="height:180px">'+
+    (projMQL.length?projMQL.map(function(d){
+      var H2=140;
+      var ht=Math.max(d.t>0?Math.round(d.t/maxPM*H2):0,2),ha=Math.max(d.a>0?Math.round(d.a/maxPM*H2):0,2),p2=pct(d.a,d.t);
+      var aColor=p2>=100?'var(--green)':p2>=50?'var(--blue)':'var(--red)';
+      return '<div class="bgroup" style="align-items:center">'+
+        '<div class="bpair" style="height:'+H2+'px;align-items:flex-end;gap:4px">'+
+          (d.t>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+            '<div style="font-size:9px;color:var(--amber);font-weight:700;margin-bottom:2px">'+d.t+'</div>'+
+            '<div style="height:'+ht+'px;width:18px;background:var(--amber);opacity:.8;border-radius:4px 4px 0 0"></div>'+
+          '</div>':'<div style="width:18px"></div>')+
+          (d.a>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+            '<div style="font-size:9px;color:'+aColor+';font-weight:700;margin-bottom:2px">'+d.a+'</div>'+
+            '<div style="height:'+ha+'px;width:18px;background:'+aColor+';border-radius:4px 4px 0 0"></div>'+
+          '</div>':'<div style="width:18px"></div>')+
+        '</div>'+
+        '<div class="blabel">'+d.proj.split(' ')[0]+'<br/><span style="color:'+aColor+';font-weight:700">'+p2+'%</span></div>'+
+      '</div>';
+    }).join(''):'<div style="color:var(--muted);margin:auto">No data</div>')+
+    '</div></div></div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Full Marketing Table</div>'+
+    '<div class="tw"><table>'+
+    '<thead><tr><th>Month</th><th>Project</th><th>MQL Tgt</th><th>MQL Act</th><th>MQL%</th><th>SQL Tgt</th><th>SQL Act</th><th>SQL%</th><th>SV Tgt</th><th>SV Act</th><th>SV%</th></tr></thead>'+
+    '<tbody>'+data.filter(function(r){return r.mqlT||r.mqlA||r.sqlT||r.svT;}).map(function(r){
+      return '<tr><td class="tl">'+r.month+'</td><td class="tl">'+r.project+'</td>'+
+        '<td style="color:var(--amber)">'+(r.mqlT||'—')+'</td><td style="color:var(--blue)">'+(r.mqlA||'—')+'</td><td>'+(r.mqlT?flag(pct(r.mqlA,r.mqlT)):'—')+'</td>'+
+        '<td style="color:var(--amber)">'+(r.sqlT||'—')+'</td><td style="color:var(--blue)">'+(r.sqlA||'—')+'</td><td>'+(r.sqlT?flag(pct(r.sqlA,r.sqlT)):'—')+'</td>'+
+        '<td style="color:var(--amber)">'+(r.svT||'—')+'</td><td style="color:var(--blue)">'+(r.svA||'—')+'</td><td>'+(r.svT?flag(pct(r.svA,r.svT)):'—')+'</td></tr>';
+    }).join('')+'</tbody></table></div></div>';
+  buildFilters();
+}
+
+// ── YoY ──
+function yoyR(){
+  var project=sel('yy_proj');
+  var fyTot=sum(flt('all',project),'target'),fyActTot=sum(flt('all',project),'actual'),pyTot=pyFor('all',project);
+  var growth=pyTot>0?Math.round((fyTot-pyTot)/pyTot*100):0;
+  var vals=MONTH_ORDER.map(function(m){return{m:m,py:pyFor(m,project),tgt:sum(flt(m,project),'target'),act:sum(flt(m,project),'actual')};});
+  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.py,v.tgt,v.act);}));if(maxV<=0)maxV=1;
+  document.getElementById('page-yoy').innerHTML=
+    '<div class="fbar"><label>Project</label><select data-type="project" id="yy_proj" onchange="yoyR()"></select></div>'+
+    '<div class="krow">'+
+    kpi('FY25-26 Total PY',cr(pyTot)+'Cr','Last year actual','var(--purple)')+
+    kpi('FY26-27 Target',cr(fyTot)+'Cr','This year target','var(--amber)')+
+    kpi('FY26-27 Actual MTD',cr(fyActTot)+'Cr',pct(fyActTot,fyTot)+'% of FY27 target','var(--blue)')+
+    kpi('Target Growth vs PY',(growth>=0?'▲':'▼')+Math.abs(growth)+'%','FY27 tgt vs FY26 act',growth>=0?'var(--green)':'var(--red)')+
+    '</div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Month-wise: FY25-26 Actual vs FY26-27 Target vs FY26-27 Actual</div>'+
+    '<div class="tw"><table>'+
+    '<thead><tr><th>Month</th><th>FY25-26 Actual (PY)</th><th>FY26-27 Target</th><th>FY26-27 Actual</th><th>% Achieved</th><th>Tgt Growth vs PY</th><th>Shortfall</th></tr></thead>'+
+    '<tbody>'+vals.map(function(v){
+      var achP=pct(v.act,v.tgt),grP=v.py>0?Math.round((v.tgt-v.py)/v.py*100):0;
+      var bg=v.act>0?(achP>=80?'#10b98108':achP>=50?'#f59e0b08':'#ef444408'):'';
+      return '<tr style="background:'+bg+'">'+
+        '<td class="tl">'+v.m+'</td>'+
+        '<td style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</td>'+
+        '<td style="color:var(--amber);font-weight:600">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</td>'+
+        '<td style="color:var(--blue)">'+(v.act>0?cr(v.act)+'Cr':'—')+'</td>'+
+        '<td>'+(v.tgt>0&&v.act>0?flag(achP):(v.tgt>0?'<span style="color:var(--muted)">Pending</span>':'—'))+'</td>'+
+        '<td>'+(v.py>0&&v.tgt>0?'<span style="color:'+(grP>=0?'var(--green)':'var(--red)')+'">'+( grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':'—')+'</td>'+
+        '<td style="color:var(--red)">'+(v.tgt>0&&v.act>0&&v.act<v.tgt?cr(v.tgt-v.act)+'Cr':(v.act>=v.tgt&&v.tgt>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td></tr>';
+    }).join('')+'</tbody>'+
+    '<tfoot><tr><td class="tl">TOTAL</td><td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td><td style="color:var(--amber)">'+cr(fyTot)+'Cr</td><td style="color:var(--blue)">'+cr(fyActTot)+'Cr</td><td>'+flag(pct(fyActTot,fyTot))+'</td><td><span style="color:'+(growth>=0?'var(--green)':'var(--red)')+'">vs PY '+(growth>=0?'▲':'▼')+Math.abs(growth)+'%</span></td><td style="color:var(--red)">'+(fyTot>fyActTot?cr(fyTot-fyActTot)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr></tfoot>'+
+    '</table></div></div>'+
+    '<div class="card"><div class="st"><div class="stbar"></div>Visual Comparison</div>'+
+    '<div class="barchart" style="height:130px">'+
+    vals.map(function(v){
+      var hp=Math.round(v.py/maxV*110),ht=Math.round(v.tgt/maxV*110),ha=Math.round(v.act/maxV*110);
+      return '<div class="bgroup"><div class="bpair" style="height:115px">'+
+        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+          '<div class="bar-label" style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</div>'+ 
+          '<div class="bar" style="height:'+hp+'px;background:#8b5cf6;opacity:.6" title="'+v.m+' PY: '+v.py.toFixed(2)+'Cr"></div>'+ 
+        '</div>'+ 
+        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+          '<div class="bar-label" style="color:var(--amber)">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</div>'+ 
+          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7" title="'+v.m+' Tgt: '+v.tgt.toFixed(2)+'Cr"></div>'+ 
+        '</div>'+ 
+        (v.act>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
+          '<div class="bar-label" style="color:var(--blue)">'+cr(v.act)+'Cr</div>'+ 
+          '<div class="bar" style="height:'+ha+'px;background:var(--blue)" title="'+v.m+' Act: '+v.act.toFixed(2)+'Cr"></div>'+ 
+        '</div>':'<div style="width:16px"></div>')+
+        '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
+    }).join('')+
+    '</div>'+ 
+    '<div style="display:flex;gap:14px;margin-top:10px;font-size:11px">'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;opacity:.6"></span>FY25-26 Actual</span>'+ 
+    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;opacity:.7"></span>FY26-27 Target</span>'+
+    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>FY26-27 Actual</span>'+
+    '</div></div>';
+  buildFilters();
+}
+
+// ── INVENTORY ──
+function invR(){
+  if(!D||!D.inventory||!D.inventory.length){
+    document.getElementById('page-inventory').innerHTML='<div class="ebox"><h3>No Inventory Data</h3><p>Please fill in the Inventory sheet in your Excel file (Project Name, Total_units, Units_sold, Units_Available, Potential)</p></div>';
+    return;
+  }
+  var inv=D.inventory;
+  var totUnits=inv.reduce(function(s,r){return s+r.total;},0);
+  var totSold=inv.reduce(function(s,r){return s+r.sold;},0);
+  var totAvail=inv.reduce(function(s,r){return s+r.available;},0);
+  var totPotential=inv.reduce(function(s,r){return s+r.potential;},0);
+  var soldPct=pct(totSold,totUnits);
+
+  document.getElementById('page-inventory').innerHTML=
+    '<div class="krow">'+
+    kpi('Total Units',totUnits,'All projects','var(--blue)')+
+    kpi('Units Sold',totSold,soldPct+'% of total',soldPct>=70?'var(--green)':soldPct>=40?'var(--amber)':'var(--red)')+
+    kpi('Units Available',totAvail,'Ready to sell','var(--cyan)')+
+    kpi('Potential',totPotential>0?totPotential:'—',totPotential>0?'Pipeline units':'Not filled','var(--purple)')+
+    kpi('Sold %',soldPct+'%','Overall','var(--green)')+
+    '</div>'+
+    '<div class="card gf"><div class="st"><div class="stbar"></div>Inventory Status — Project Wise</div>'+
+    '<div class="tw"><table>'+
+    '<thead><tr><th>Project</th><th>Total Units</th><th>Units Sold</th><th>Units Available</th><th>Potential</th><th>% Sold</th><th>Progress</th><th>Status</th></tr></thead>'+
+    '<tbody>'+inv.map(function(r){
+      var sp=pct(r.sold,r.total||1);
+      var ap=pct(r.available,r.total||1);
+      var statusLabel=r.available===0?'<span class="flag rd">Sold Out</span>':r.available<5?'<span class="flag yw">Low Stock</span>':'<span class="flag gr">Available</span>';
+      var barColor=sp>=80?'var(--green)':sp>=50?'var(--amber)':'var(--blue)';
+      return '<tr>'+
+        '<td class="tl">'+r.project+'</td>'+
+        '<td style="font-weight:600">'+r.total+'</td>'+
+        '<td style="color:var(--green);font-weight:600">'+r.sold+'</td>'+
+        '<td style="color:var(--cyan);font-weight:600">'+r.available+'</td>'+
+        '<td style="color:var(--purple)">'+(r.potential>0?r.potential:'—')+'</td>'+
+        '<td>'+flag(sp,sp+'%')+'</td>'+
+        '<td style="min-width:140px">'+
+          '<div style="background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;margin-bottom:2px">'+
+            '<div style="height:100%;width:'+Math.min(sp,100)+'%;background:'+barColor+';border-radius:20px"></div>'+
+          '</div>'+
+          '<div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted)">'+
+            '<span style="color:var(--green)">Sold: '+sp+'%</span>'+
+            '<span style="color:var(--cyan)">Avail: '+ap+'%</span>'+
+          '</div>'+
+        '</td>'+
+        '<td>'+statusLabel+'</td>'+
+      '</tr>';
+    }).join('')+'</tbody>'+
+    '<tfoot><tr>'+
+      '<td class="tl">TOTAL</td>'+
+      '<td style="font-weight:700">'+totUnits+'</td>'+
+      '<td style="color:var(--green);font-weight:700">'+totSold+'</td>'+
+      '<td style="color:var(--cyan);font-weight:700">'+totAvail+'</td>'+
+      '<td style="color:var(--purple)">'+totPotential+'</td>'+
+      '<td>'+flag(soldPct,soldPct+'%')+'</td>'+
+      '<td></td><td></td>'+
+    '</tr></tfoot>'+
+    '</table></div></div>'+
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+
+    inv.map(function(r){
+      var sp=pct(r.sold,r.total||1),ap=pct(r.available,r.total||1);
+      var holdP=Math.max(0,100-sp-ap);
+      var borderC=sp>=70?'var(--green)':sp>=40?'var(--amber)':'var(--blue)';
+      return '<div class="card" style="border-top:2px solid '+borderC+';background:var(--card2)">'+
+        '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;margin-bottom:10px;color:var(--head)">'+r.project+'</div>'+
+        '<div style="display:flex;gap:8px;margin-bottom:10px">'+
+          '<div style="flex:1;text-align:center;background:#10b98112;border-radius:7px;padding:8px 4px">'+
+            '<div style="font-size:10px;color:var(--muted)">Sold</div>'+
+            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--green)">'+r.sold+'</div>'+
+          '</div>'+
+          '<div style="flex:1;text-align:center;background:#06b6d412;border-radius:7px;padding:8px 4px">'+
+            '<div style="font-size:10px;color:var(--muted)">Available</div>'+
+            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--cyan)">'+r.available+'</div>'+
+          '</div>'+
+          '<div style="flex:1;text-align:center;background:#3b82f612;border-radius:7px;padding:8px 4px">'+
+            '<div style="font-size:10px;color:var(--muted)">Total</div>'+
+            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--blue)">'+r.total+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div style="height:12px;border-radius:6px;overflow:hidden;display:flex;gap:1px">'+
+          '<div style="width:'+sp+'%;background:var(--green);border-radius:6px 0 0 6px" title="Sold '+sp+'%"></div>'+
+          '<div style="width:'+holdP+'%;background:var(--amber)" title="Other '+holdP+'%"></div>'+
+          '<div style="flex:1;background:#1e3355;border-radius:0 6px 6px 0" title="Available '+ap+'%"></div>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">'+
+          '<span style="color:var(--green)">■ Sold '+sp+'%</span>'+
+          '<span style="color:var(--cyan)">■ Avail '+ap+'%</span>'+
+        '</div>'+
+        (r.potential>0?'<div style="margin-top:8px;font-size:11px;color:var(--purple)">🎯 Potential: '+r.potential+' units</div>':'')+
+      '</div>';
+    }).join('')+'</div>';
+}
+
+// ═══════════════════════════════════════════════════════════
+//  BOOT — show login screen (no auto-load)
+// ═══════════════════════════════════════════════════════════
+document.getElementById('loginUser').focus();
+</script>
+</body>
+</html>

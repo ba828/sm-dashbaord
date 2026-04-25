@@ -9,13 +9,13 @@
 
 :root{--bg:#060d1a;--surface:#0d1b2e;--card:#111f35;--card2:#162540;--border:#1e3355;--border2:#243d63;--amber:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;--text:#e2e8f0;--muted:#64748b;--head:#f8fafc}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13.5px;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13.5px;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 0%,#1e3a5f22,transparent 55%),radial-gradient(ellipse at 85% 100%,#f59e0b0d,transparent 55%);pointer-events:none;z-index:0}
-.nav{position:sticky;top:0;z-index:200;background:#060d1acc;backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 18px;height:52px;display:flex;align-items:center;gap:4px}
+.nav{position:sticky;top:0;z-index:200;background:#060d1acc;backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:6px 12px;min-height:52px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
 .brand{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--amber);margin-right:16px;white-space:nowrap;letter-spacing:1px}
 .brand span{color:var(--muted);font-size:11px;font-family:'Outfit',sans-serif;font-weight:400;margin-left:5px}
-.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
+.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{height:3px}
 .tab{padding:5px 13px;border-radius:6px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;transition:.15s;border:1px solid transparent}
 .tab:hover{color:var(--text);background:var(--card)}
 .tab.on{color:var(--amber);background:var(--card);border-color:var(--border2)}
@@ -53,7 +53,7 @@ select:focus{border-color:var(--amber)}
 .klabel{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
 .kval{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--head);line-height:1}
 .ksub{font-size:11px;color:var(--muted);margin-top:3px}
-.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--border);-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th{background:var(--surface);color:var(--muted);font-weight:600;padding:8px 11px;text-align:center;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
 td{padding:7px 11px;text-align:center;border-bottom:1px solid #0f1e33;white-space:nowrap}
@@ -79,7 +79,7 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 
 /* ── LOGIN SCREEN ── */
 .login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:100%;max-width:420px;box-shadow:0 20px 60px #000a}
+.login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:calc(100% - 24px);max-width:420px;box-shadow:0 20px 60px #000a}
 .login-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
 .login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:28px}
 .login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600;display:block}
@@ -98,6 +98,182 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 #app{display:none}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 .shake{animation:shake .35s ease}
+
+/* ── TABS SCROLL INDICATOR ─────────────────────────────────── */
+.tabs-wrap{
+  position:relative;
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+}
+/* Fade gradient on right — hints more tabs to scroll */
+.tabs-fade{
+  position:absolute;
+  right:0;
+  top:0;
+  bottom:0;
+  width:40px;
+  background:linear-gradient(to right, transparent, #060d1a);
+  pointer-events:none;
+  z-index:2;
+  transition:opacity .3s;
+  border-radius:0 6px 6px 0;
+}
+.tabs-fade.hidden{opacity:0}
+
+/* On desktop: hide the fade (not needed) */
+@media(min-width:601px){
+  .tabs-fade{display:none}
+}
+
+/* ── MOBILE SCROLLBAR ─────────────────────────────────────── */
+@media(max-width:600px){
+  /* Show a thin visible scrollbar on tabs */
+  .tabs{
+    scrollbar-width:thin;
+    scrollbar-color:var(--amber) transparent;
+    padding-bottom:4px;  /* space for scrollbar */
+  }
+  .tabs::-webkit-scrollbar{
+    display:block !important;
+    height:3px;
+  }
+  .tabs::-webkit-scrollbar-track{
+    background:var(--border);
+    border-radius:2px;
+  }
+  .tabs::-webkit-scrollbar-thumb{
+    background:var(--amber);
+    border-radius:2px;
+  }
+
+  /* Tabs container */
+  .tabs-wrap{flex:none;width:100%;order:2}
+  .tabs{width:100%}
+
+  /* Tab dots indicator below tabs */
+  .tabs-wrap::after{
+    content:'swipe to see more tabs →';
+    display:block;
+    position:absolute;
+    bottom:-16px;
+    right:0;
+    font-size:9px;
+    color:var(--muted);
+    opacity:.6;
+    white-space:nowrap;
+    pointer-events:none;
+  }
+}
+
+/* ── MOBILE NAV LAYOUT ──────────────────────────────────────── */
+@media(max-width:600px){
+  .nav{
+    padding:6px 10px;
+    min-height:auto;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .brand{font-size:14px;margin-right:4px;order:0}
+  .brand span{display:none}
+  .nav-r{margin-left:auto;gap:5px;order:1;flex-shrink:0}
+  .rbtn{padding:4px 8px;font-size:10.5px;border-radius:5px}
+  #status{display:none}
+
+  /* Tabs row takes full width below brand+buttons */
+  .tabs-wrap{
+    order:3;
+    width:100%;
+    margin-top:2px;
+    padding-bottom:18px; /* space for "swipe" hint */
+  }
+  .tab{padding:5px 11px;font-size:11.5px}
+
+  /* PAGES */
+  .page{padding:10px}
+
+  /* KPI — 2 per row */
+  .krow{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+  .kpi{padding:10px 11px;border-radius:8px}
+  .kval{font-size:17px}
+  .klabel{font-size:9px;letter-spacing:.4px}
+  .ksub{font-size:10px;margin-top:2px}
+
+  /* Cards */
+  .card{padding:11px;border-radius:8px}
+  .g2,.g3{grid-template-columns:1fr;gap:9px;margin-bottom:10px}
+  .gf{margin-bottom:10px}
+  .st{font-size:13px;margin-bottom:9px}
+
+  /* Filters */
+  .fbar{gap:6px;margin-bottom:9px}
+  .fbar label{font-size:10px}
+  select{padding:6px 26px 6px 8px;font-size:11.5px;min-height:32px;border-radius:6px}
+
+  /* Tables */
+  table{font-size:11px}
+  th{padding:6px 7px;font-size:9.5px;letter-spacing:.2px}
+  td{padding:6px 7px;font-size:11px}
+
+  /* Bar chart */
+  .barchart{height:140px;gap:2px}
+  .blabel{font-size:8px;margin-top:3px}
+  .bar{min-width:10px;width:10px}
+
+  /* Heatmap */
+  .hcell{font-size:9px;padding:4px 1px;min-width:26px;border-radius:4px}
+
+  /* Login */
+  .login-overlay{align-items:flex-start;padding-top:30px}
+  .login-box{padding:24px 18px;border-radius:12px;width:calc(100% - 20px)}
+  .login-lock{font-size:34px;margin-bottom:8px}
+  .login-logo{font-size:20px;letter-spacing:1px}
+  .login-sub{font-size:11px;margin-bottom:18px}
+  .login-input{padding:10px 12px;font-size:13px;margin-bottom:11px}
+  .login-btn{padding:12px;font-size:13px}
+  .login-footer{font-size:9.5px;margin-top:14px}
+
+  /* Scrollable bar charts */
+  .chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .chart-scroll .barchart{min-width:max-content}
+  .chart-scroll .bgroup{flex:0 0 auto;min-width:50px}
+}
+
+/* ── Tablet 860px ─────────────────────────────────────────── */
+@media(max-width:860px){
+  .g2{grid-template-columns:1fr}
+  .krow{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+}
+
+/* ── Small phone 420px ────────────────────────────────────── */
+@media(max-width:420px){
+  .brand{font-size:13px}
+  .tab{padding:4px 9px;font-size:11px}
+  .rbtn{padding:3px 7px;font-size:10px}
+  .kval{font-size:15px}
+  .page{padding:8px}
+  .card{padding:9px}
+  .kpi{padding:9px 10px}
+  table{font-size:10.5px}
+  th{padding:5px 6px;font-size:9px}
+  td{padding:5px 6px}
+  .blabel{font-size:7.5px}
+}
+
+/* ── Very small 360px ─────────────────────────────────────── */
+@media(max-width:360px){
+  .brand{font-size:12px}
+  .tab{padding:3px 7px;font-size:10.5px}
+  .kval{font-size:14px}
+  .kpi{padding:8px 9px}
+  .page{padding:7px}
+  .card{padding:8px}
+  table{font-size:10px}
+  th{padding:4px 5px;font-size:8.5px}
+  td{padding:4px 5px}
+}
+
 </style>
 </head>
 <body>
@@ -131,15 +307,18 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 <div id="app">
 <nav class="nav">
   <div class="brand">S&M <span>FY 2026-27</span></div>
-  <div class="tabs">
-    <div class="tab on"  onclick="nav('overview',this)">Overview</div>
-    <div class="tab" onclick="nav('projects',this)">Projects</div>
-    <div class="tab" onclick="nav('stm',this)">STM Wise</div>
-    <div class="tab" onclick="nav('meo',this)">MEO</div>
-    <div class="tab" onclick="nav('saletype',this)">Direct vs CP</div>
-    <div class="tab" onclick="nav('marketing',this)">Marketing</div>
-    <div class="tab" onclick="nav('yoy',this)">YoY Compare</div>
-    <div class="tab" onclick="nav('inventory',this)">Inventory</div>
+  <div class="tabs-wrap">
+    <div class="tabs" id="tabsRow">
+      <div class="tab on"  onclick="nav('overview',this)">Overview</div>
+      <div class="tab" onclick="nav('projects',this)">Projects</div>
+      <div class="tab" onclick="nav('stm',this)">STM Wise</div>
+      <div class="tab" onclick="nav('meo',this)">MEO</div>
+      <div class="tab" onclick="nav('saletype',this)">Direct vs CP</div>
+      <div class="tab" onclick="nav('marketing',this)">Marketing</div>
+      <div class="tab" onclick="nav('yoy',this)">YoY Compare</div>
+      <div class="tab" onclick="nav('inventory',this)">Inventory</div>
+    </div>
+    <div class="tabs-fade" id="tabsFade"></div>
   </div>
   <div class="nav-r">
     <span class="status" id="status"></span>
@@ -390,6 +569,33 @@ function doLogout() {
   setBusy(false);
   setLoginProgress(0);
   document.getElementById('loginUser').focus();
+
+// ── Tab scroll indicator (mobile) ─────────────────────────────
+(function(){
+  var tabsRow  = document.getElementById('tabsRow');
+  var tabsFade = document.getElementById('tabsFade');
+  if (!tabsRow || !tabsFade) return;
+
+  function updateFade(){
+    var atEnd = tabsRow.scrollLeft + tabsRow.clientWidth >= tabsRow.scrollWidth - 5;
+    tabsFade.classList.toggle('hidden', atEnd);
+  }
+
+  tabsRow.addEventListener('scroll', updateFade, {passive:true});
+  // Check on load
+  setTimeout(updateFade, 300);
+
+  // Auto-scroll active tab into view when nav() is called
+  var _origNav = window.nav;
+  window.nav = function(name, el){
+    _origNav(name, el);
+    // Scroll the clicked tab into view smoothly
+    if (el && el.scrollIntoView){
+      el.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+    }
+    setTimeout(updateFade, 400);
+  };
+})();
 }
 
 // ── Demo data (when Sheet ID not set yet) ─────────────────
@@ -613,12 +819,12 @@ function monthBarChart(project){
   var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.t,v.a,v.py);}));
   if(maxV<=0)maxV=1;
   var H=160;
-  return '<div class="barchart" style="height:'+(H+30)+'px;align-items:flex-end">'+vals.map(function(v){
+  return '<div class="chart-scroll"><div class="barchart" style="height:'+(H+30)+'px;align-items:flex-end">'+vals.map(function(v){
     var ht=Math.max(v.t>0?Math.round(v.t/maxV*H):0,2),ha=Math.max(v.a>0?Math.round(v.a/maxV*H):0,2),hp=Math.max(v.py>0?Math.round(v.py/maxV*H):0,2);
     var tLabel=v.t>0?v.t.toFixed(1):'';
     var aLabel=v.a>0?v.a.toFixed(1):'';
     var pyLabel=v.py>0?v.py.toFixed(1):'';
-    return '<div class="bgroup" style="align-items:center">'+
+    return '<div class="bgroup" style="align-items:center;min-width:54px">'+
       '<div class="bpair" style="height:'+H+'px;align-items:flex-end;gap:3px">'+
       (v.t>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
         '<div style="font-size:8.5px;color:var(--amber);font-weight:700;margin-bottom:2px;white-space:nowrap">'+tLabel+'</div>'+
@@ -630,7 +836,7 @@ function monthBarChart(project){
         '<div style="font-size:8.5px;color:#9ca3af;font-weight:700;margin-bottom:2px;white-space:nowrap">'+pyLabel+'</div>'+
         '<div style="height:'+hp+'px;width:14px;background:#4b5563;border-radius:3px 3px 0 0" title="'+v.m+' PY: '+v.py.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
       '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
-  }).join('')+'</div>';
+  }).join('')+'</div></div>';
 }
 
 // ── PROJECTS ──
@@ -704,12 +910,12 @@ function stmR(){
     }).join(''):'<div style="color:var(--muted);padding:20px;text-align:center">No data for selected filters</div>')+
     '</div>'+
     '<div class="card"><div class="st"><div class="stbar"></div>Target vs Actual Bars</div>'+
-    '<div class="barchart">'+
+    '<div class="chart-scroll"><div class="barchart">'+
     (bySTM.length?bySTM.map(function(s){
       var ht=Math.round(s.t/maxV*90),ha=Math.round(s.a/maxV*90);
-      return '<div class="bgroup"><div class="bpair">'+
+      return '<div class="bgroup" style="min-width:50px"><div class="bpair">'+
         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--amber)">'+cr(s.t)+'Cr</div>'+ 
+          '<div class="bar-label" style="color:var(--amber)">'+cr(s.t)+'Cr</div>'+
           '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7" title="'+s.stm+' Target: '+s.t.toFixed(2)+'Cr"></div>'+ 
         '</div>'+ 
         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
@@ -718,7 +924,7 @@ function stmR(){
         '</div>'+ 
         '</div><div class="blabel">'+s.stm.split(' ')[0]+'</div></div>';
     }).join(''):'<div style="color:var(--muted);margin:auto">No data</div>')+
-    '</div></div></div>'+
+    '</div></div></div></div>'+
     '<div class="card gf"><div class="st"><div class="stbar"></div>Full STM Table</div>'+
     '<div class="tw"><table>'+
     '<thead><tr><th>STM</th><th>Projects</th><th>Type</th><th>Target</th><th>Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
@@ -1003,11 +1209,11 @@ function yoyR(){
     '</tr></tfoot>'+
     '</table></div></div>'+
     '<div class="card"><div class="st"><div class="stbar"></div>Visual Comparison</div>'+
-    '<div class="barchart" style="height:130px">'+
+    '<div class="chart-scroll"><div class="barchart" style="height:130px">'+
     vals.map(function(v){
       var hp=Math.round(v.py/maxV*110),ht=Math.round(v.tgt/maxV*110),ha=Math.round(v.act/maxV*110);
       var grP=v.py>0&&v.act>0?Math.round((v.act-v.py)/v.py*100):null;
-      return '<div class="bgroup"><div class="bpair" style="height:115px">'+
+      return '<div class="bgroup" style="min-width:54px"><div class="bpair" style="height:115px">'+
         '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
           '<div class="bar-label" style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</div>'+
           '<div class="bar" style="height:'+hp+'px;background:#8b5cf6;opacity:.6"></div>'+
@@ -1026,7 +1232,7 @@ function yoyR(){
         :'<div style="width:16px"></div>')+
       '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
     }).join('')+
-    '</div>'+
+    '</div></div>'+
     '<div style="display:flex;gap:14px;margin-top:10px;font-size:11px">'+
     '<span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;opacity:.6"></span>FY25-26 Actual</span>'+
     '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;opacity:.7"></span>FY26-27 Target</span>'+
@@ -1034,6 +1240,7 @@ function yoyR(){
     '</div></div>';
   buildFilters();
 }
+
 // ── INVENTORY ──
 function invR(){
   if(!D||!D.inventory||!D.inventory.length){
@@ -1129,6 +1336,33 @@ function invR(){
 
 // ── Boot ─────────────────────────────────────────────────
 document.getElementById('loginUser').focus();
+
+// ── Tab scroll indicator (mobile) ─────────────────────────────
+(function(){
+  var tabsRow  = document.getElementById('tabsRow');
+  var tabsFade = document.getElementById('tabsFade');
+  if (!tabsRow || !tabsFade) return;
+
+  function updateFade(){
+    var atEnd = tabsRow.scrollLeft + tabsRow.clientWidth >= tabsRow.scrollWidth - 5;
+    tabsFade.classList.toggle('hidden', atEnd);
+  }
+
+  tabsRow.addEventListener('scroll', updateFade, {passive:true});
+  // Check on load
+  setTimeout(updateFade, 300);
+
+  // Auto-scroll active tab into view when nav() is called
+  var _origNav = window.nav;
+  window.nav = function(name, el){
+    _origNav(name, el);
+    // Scroll the clicked tab into view smoothly
+    if (el && el.scrollIntoView){
+      el.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+    }
+    setTimeout(updateFade, 400);
+  };
+})();
 </script>
 </body>
 </html>

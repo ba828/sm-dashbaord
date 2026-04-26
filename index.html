@@ -89,28 +89,6 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
 
-/* ── LOGIN SCREEN ── */
-.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:calc(100% - 24px);max-width:420px;box-shadow:0 20px 60px #000a}
-.login-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
-.login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:28px}
-.login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600;display:block}
-.login-input{width:100%;background:#0d1b2e;border:1.5px solid var(--border2);color:#fff !important;padding:11px 14px;border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;margin-bottom:14px;transition:.2s}
-.login-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
-.login-input::placeholder{color:#475569}
-.login-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;margin-top:6px;transition:.2s}
-.login-btn:hover{background:#fbbf24;transform:translateY(-1px)}
-.login-btn:disabled{opacity:.5;cursor:wait;transform:none}
-.login-err{background:#ef444415;border:1px solid #ef444440;color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;text-align:center}
-.login-progress{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:14px;display:none;overflow:hidden}
-.login-progress-fill{height:100%;background:var(--amber);border-radius:2px;transition:width .4s ease}
-.login-msg{text-align:center;color:var(--muted);font-size:12px;margin-top:8px;display:none}
-.login-lock{font-size:46px;text-align:center;margin-bottom:12px}
-.login-footer{text-align:center;font-size:10px;color:#334155;margin-top:18px;line-height:1.6}
-#app{display:none}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.shake{animation:shake .35s ease}
-
 /* ── TABS SCROLL INDICATOR ─────────────────────────────────── */
 .tabs-wrap{
   position:relative;
@@ -236,16 +214,6 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
   /* Heatmap */
   .hcell{font-size:9px;padding:4px 1px;min-width:26px;border-radius:4px}
 
-  /* Login */
-  .login-overlay{align-items:flex-start;padding-top:30px}
-  .login-box{padding:24px 18px;border-radius:12px;width:calc(100% - 20px)}
-  .login-lock{font-size:34px;margin-bottom:8px}
-  .login-logo{font-size:20px;letter-spacing:1px}
-  .login-sub{font-size:11px;margin-bottom:18px}
-  .login-input{padding:10px 12px;font-size:13px;margin-bottom:11px}
-  .login-btn{padding:12px;font-size:13px}
-  .login-footer{font-size:9.5px;margin-top:14px}
-
 }
 
 /* ── Tablet 860px ─────────────────────────────────────────── */
@@ -285,31 +253,6 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="loginScreen" class="login-overlay">
-  <div class="login-box" id="loginBox">
-    <div class="login-lock">🔐</div>
-    <div class="login-logo">S&M DASHBOARD</div>
-    <div class="login-sub">FY 2026-27 &nbsp;|&nbsp; Authorised Access Only</div>
-    <div class="login-err" id="loginErr"></div>
-    <label class="login-label">Username</label>
-    <input class="login-input" id="loginUser" type="text" placeholder="Enter username"
-           autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/>
-    <label class="login-label">Password</label>
-    <input class="login-input" id="loginPass" type="password" placeholder="Enter password"
-           autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <div class="login-progress" id="loginProgress">
-      <div class="login-progress-fill" id="loginProgressFill" style="width:0%"></div>
-    </div>
-    <div class="login-msg" id="loginMsg"></div>
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
-    <div class="login-footer">
-      🔒 Password used only to decrypt data locally in your browser.<br/>
-      No password or credentials are stored or transmitted.
-    </div>
-  </div>
-</div>
 
 <!-- APP -->
 <div id="app">
@@ -351,7 +294,7 @@ tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--bo
 var SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
 
 
-var ALLOWED_USERS = ['admin', 'manager', 'sales'];
+var ALLOWED_USERS = ['admin', 'manager', 'sales', 'sm_head'];
 
 
 function hexToBytes(hex) {
@@ -397,9 +340,6 @@ async function decryptPayload(encHex, password) {
 // ════════════════════════════════════════════════════════
 
 async function fetchFromSheets() {
-  setLoginMsg('Fetching data from Google Sheets…');
-  setLoginProgress(20);
-
   var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
             '/gviz/tq?tqx=out:csv&sheet=EncryptedData&t=' + Date.now();
   var res = await fetch(url);
@@ -433,27 +373,40 @@ var MONTH_ORDER = ['April','May','June','July','August','September',
 var _encCache = null;  // cache encrypted blob, store password in memory for reload
 
 async function doLogin() {
-  var username = document.getElementById('loginUser').value.trim();
-  var password = document.getElementById('loginPass').value;
+  var redirect = null;
+  try {
+    redirect = JSON.parse(sessionStorage.getItem('ceo_redirect') || 'null');
+  } catch(e) {
+    redirect = null;
+  }
 
-  // Clear previous error
-  document.getElementById('loginErr').style.display = 'none';
+  var username, password;
+  if (redirect && redirect.dept === 'sales-marketing' && redirect.password) {
+    username = redirect.user || '';
+    password = redirect.password;
+    sessionStorage.removeItem('ceo_redirect');
+  } else {
+    // No redirect data — direct access not allowed, redirect to CEO
+    window.location.href = '../ceo/index.html';
+    return;
+  }
 
+  // Clear previous error (though no login screen, but for consistency)
   // Basic validation
   if (!username || !password) {
-    showLoginErr('Please enter username and password');
+    console.error('Invalid redirect data');
+    window.location.href = '../ceo/index.html';
     return;
   }
 
-  // Check username exists (no password check — password proved by decryption)
+  // Check username exists
   if (ALLOWED_USERS.indexOf(username) === -1) {
-    showLoginErr('Username not recognised');
-    document.getElementById('loginBox').classList.add('shake');
-    setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
+    console.error('Username not recognised');
+    window.location.href = '../ceo/index.html';
     return;
   }
 
-  // Disable button, show progress
+  // Disable button, show progress (but no UI, so just proceed)
   setBusy(true);
 
   try {
@@ -461,43 +414,29 @@ async function doLogin() {
 
     if (SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
       // Demo mode — Sheet ID not configured yet
-      setLoginMsg('Loading demo data…');
-      setLoginProgress(50);
       await new Promise(function(r){ setTimeout(r, 500); });
       D = getDemoData();
-      setLoginProgress(100);
     } else {
       // Step 1: Fetch encrypted data from Google Sheets
       encHex = await fetchFromSheets();
       _encCache = {hex: encHex, pass: password}; // store in memory for reload
 
-      // Step 2: Decrypt with the entered password
-      // If password is WRONG → AES-GCM auth tag fails → throws → catch below
-      setLoginMsg('Decrypting with your password…');
-      setLoginProgress(65);
-
+      // Step 2: Decrypt with the password
       var raw;
       try {
         raw = await decryptPayload(encHex, password);
       } catch(e) {
-        // Decryption failed = wrong password
-        document.getElementById('loginBox').classList.add('shake');
-        setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
-        setBusy(false);
-        setLoginProgress(0);
-        showLoginErr('Wrong password — please try again');
+        console.error('Decryption failed');
+        window.location.href = '../ceo/index.html';
         return;
       }
 
-      setLoginProgress(90);
       D = processData(raw);
     }
 
     // Step 3: Show dashboard
-    setLoginProgress(100);
     await new Promise(function(r){ setTimeout(r, 200); });
 
-    document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     document.getElementById('reloadBtn').style.display = 'inline-block';
     document.getElementById('logoutBtn').style.display = 'inline-block';
@@ -526,8 +465,8 @@ async function doLogin() {
 
   } catch(e) {
     setBusy(false);
-    setLoginProgress(0);
-    showLoginErr(e.message || 'An error occurred');
+    console.error(e.message || 'An error occurred');
+    window.location.href = '../ceo/index.html';
   }
 }
 
@@ -567,15 +506,9 @@ async function reloadData() {
 function doLogout() {
   D = null;
   _encCache = null;   // wipe password from memory
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginUser').value = '';
-  document.getElementById('reloadBtn').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'none';
-  document.getElementById('loginErr').style.display = 'none';
-  setBusy(false);
-  setLoginProgress(0);
+  // Redirect to CEO for re-login
+  window.location.href = '../ceo/index.html';
+}
   document.getElementById('loginUser').focus();
 
 // ── Tab scroll indicator (mobile) ─────────────────────────────
@@ -604,7 +537,7 @@ function doLogout() {
     setTimeout(updateFade, 400);
   };
 })();
-}
+
 
 // ── Demo data (when Sheet ID not set yet) ─────────────────
 function getDemoData() {
@@ -628,18 +561,9 @@ function getDemoData() {
 }
 
 // ── UI helpers ────────────────────────────────────────────
-function showLoginErr(msg) {
-  var el = document.getElementById('loginErr');
-  el.textContent = msg; el.style.display = 'block';
-}
 function setBusy(on) {
-  document.getElementById('loginBtn').disabled = on;
-  document.getElementById('loginBtn').textContent = on ? 'Please wait…' : 'SIGN IN →';
-  document.getElementById('loginMsg').style.display = on ? 'block' : 'none';
-  document.getElementById('loginProgress').style.display = on ? 'block' : 'none';
+  // No login UI, but keep for consistency if needed
 }
-function setLoginMsg(msg) { document.getElementById('loginMsg').textContent = msg; }
-function setLoginProgress(pct) { document.getElementById('loginProgressFill').style.width = pct + '%'; }
 
 // ── Navigation ────────────────────────────────────────────
 function nav(name, el) {
@@ -1408,7 +1332,21 @@ function invR(){
 }
 
 // ── Boot ─────────────────────────────────────────────────
-document.getElementById('loginUser').focus();
+(function(){
+  var redirect = null;
+  try {
+    redirect = JSON.parse(sessionStorage.getItem('ceo_redirect') || 'null');
+  } catch(e) {
+    redirect = null;
+  }
+  if (redirect && redirect.dept === 'sales-marketing' && redirect.password) {
+    // Auto-login with redirect data
+    doLogin();
+  } else {
+    // No redirect data — direct access not allowed, redirect to CEO
+    window.location.href = '../ceo/index.html';
+  }
+})();
 
 // ── Tab scroll indicator (mobile) ─────────────────────────────
 (function(){

@@ -3,1445 +3,1038 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>S&M Dashboard — FY 2026-27</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<style>
+<title>S&amp;M Weekly Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
-:root{--bg:#060d1a;--surface:#0d1b2e;--card:#111f35;--card2:#162540;--border:#1e3355;--border2:#243d63;--amber:#f59e0b;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--purple:#8b5cf6;--cyan:#06b6d4;--text:#e2e8f0;--muted:#64748b;--head:#f8fafc}
+<script>
+  // ════════ EDIT THIS ════════
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLK0jBsjqx74b9po9sRH7YPNLQI4TstPxroGnzgJRc-DaPbUDrkSxNOQCPJ8CG6kjVnA/exec';
+  // ═══════════════════════════
+</script>
+
+<style>
+:root{
+  --bg:#bfdcf6;
+  --panel:#fff;
+  --ink:#0a0a0a;
+  --ink2:#222;
+  --muted:#6b7280;
+  --line:#000;
+  --primary:#5a2a82;
+  --primary-soft:#c39ad2;
+  --green:#16a34a;
+  --red:#dc2626;
+  --amber:#f59e0b;
+  --blue:#3b82f6;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:13.5px;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 0%,#1e3a5f22,transparent 55%),radial-gradient(ellipse at 85% 100%,#f59e0b0d,transparent 55%);pointer-events:none;z-index:0}
-.nav{position:sticky;top:0;z-index:200;background:#060d1acc;backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:6px 12px;min-height:52px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
-.brand{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--amber);margin-right:16px;white-space:nowrap;letter-spacing:1px}
-.brand span{color:var(--muted);font-size:11px;font-family:'Outfit',sans-serif;font-weight:400;margin-left:5px}
-.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.tabs::-webkit-scrollbar{height:3px}
-.tab{padding:5px 13px;border-radius:6px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:500;white-space:nowrap;transition:.15s;border:1px solid transparent}
-.tab:hover{color:var(--text);background:var(--card)}
-.tab.on{color:var(--amber);background:var(--card);border-color:var(--border2)}
-.nav-r{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.rbtn{background:var(--amber);color:#000;border:none;border-radius:7px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif}
-.rbtn:hover{background:#fbbf24}.rbtn:disabled{opacity:.5;cursor:wait}
-.status{font-size:11px;color:var(--muted)}
-.dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px}
-.dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
-.dot.err{background:var(--red);box-shadow:0 0 6px var(--red)}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  min-height:100vh;
+  padding:20px;
+}
+
+/* ── NAV ── */
+.nav{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px; padding:6px 10px;
+  flex-wrap:wrap; gap:10px;
+}
+.brand{
+  font-size:18px; font-weight:800; letter-spacing:0.5px;
+  color:var(--ink); display:flex; align-items:baseline; gap:10px;
+}
+.brand span{font-size:11px; color:var(--muted); font-weight:500}
+.tabs{display:flex; gap:4px; flex-wrap:wrap}
+.tab{
+  padding:7px 14px; cursor:pointer;
+  font-size:12px; font-weight:600;
+  color:var(--ink2); background:#fff;
+  border:1.5px solid var(--line); border-radius:6px;
+}
+.tab.on{background:var(--primary); color:#fff}
+.nav-r{display:flex; gap:8px; align-items:center}
+.rbtn{
+  background:#fff; color:var(--ink); border:1.5px solid var(--line);
+  border-radius:6px; padding:6px 12px; font-size:12px; font-weight:600;
+  cursor:pointer; font-family:inherit;
+}
+.rbtn:hover{background:#f5f5f5}
+.rbtn.primary{background:var(--primary); color:#fff; border-color:var(--primary)}
+.status{font-size:11px; color:var(--ink2)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+.dot.ok{background:var(--green)}
+.dot.err{background:var(--red)}
 .dot.load{background:var(--amber);animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-.page{display:none;padding:18px;max-width:1640px;margin:0 auto;position:relative;z-index:1}
-.page.on{display:block;animation:fu .2s ease}
-@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.ebox{background:#ef444412;border:1px solid var(--red);border-radius:10px;padding:24px;color:var(--red);font-size:14px;margin:20px 0}
-.ebox h3{font-family:'Syne',sans-serif;margin-bottom:10px;font-size:18px}
-.ebox code{background:#ef444420;padding:3px 8px;border-radius:4px;font-family:monospace;font-size:13px;color:#fca5a5}
-.ebox .steps{margin-top:14px;color:var(--text);line-height:1.9;font-size:13px}
-.fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-.fbar label{font-size:11px;color:var(--text);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-select{background-color:#1a2e4a !important;border:1.5px solid var(--amber);color:var(--text) !important;padding:8px 12px;border-radius:7px;font-size:12px;font-family:'Outfit',sans-serif;line-height:1.5;min-height:32px;outline:none;cursor:pointer;font-weight:600;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
-select option{background-color:#1a2e4a !important;color:#ffffff !important;font-weight:500}
-select:focus{border-color:var(--amber);box-shadow:0 0 0 2px #f59e0b33}
-select:focus{border-color:var(--amber)}
-.ms-wrap{position:relative;display:inline-block}
-.ms-btn{background:#1a2e4a;border:1.5px solid var(--amber);color:var(--text);padding:7px 30px 7px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;min-width:130px;white-space:nowrap;font-family:'Outfit',sans-serif;display:inline-block;min-height:34px;line-height:1.5;position:relative;user-select:none}
-.ms-btn::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--amber);font-size:10px;pointer-events:none}
-.ms-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:999;background:var(--card);border:1px solid var(--border2);border-radius:8px;padding:6px;min-width:170px;box-shadow:0 8px 24px #00000060;max-height:220px;overflow-y:auto}
-.ms-dd.open{display:block}
-.ms-opt{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:5px;cursor:pointer;font-size:12px;white-space:nowrap;color:var(--text)}
-.ms-opt:hover{background:var(--surface)}
-.ms-opt input[type=checkbox]{accent-color:var(--amber);cursor:pointer;width:13px;height:13px;flex-shrink:0}
-.st{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--head);margin-bottom:12px;display:flex;align-items:center;gap:7px}
-.stbar{width:3px;height:15px;background:var(--amber);border-radius:2px;flex-shrink:0}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.g2>*{min-width:0}
-.gf{margin-bottom:14px}
-@media(max-width:860px){.g2{grid-template-columns:1fr}}
-.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:15px}
-.krow{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px;margin-bottom:14px}
-.kpi{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 15px;position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--kc,var(--amber)),transparent);opacity:.7}
-.klabel{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.kval{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--head);line-height:1}
-.ksub{font-size:11px;color:var(--muted);margin-top:3px}
-.tw{overflow-x:auto;border-radius:8px;border:1px solid var(--border);-webkit-overflow-scrolling:touch}
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{background:var(--surface);color:var(--muted);font-weight:600;padding:8px 11px;text-align:center;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border)}
-td{padding:7px 11px;text-align:center;border-bottom:1px solid #0f1e33;white-space:nowrap}
+
+/* ── PAGE ── */
+.page{display:none}
+.page.on{display:block; animation:fu .25s ease}
+@keyframes fu{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+
+/* ── BANNER (page title) ── */
+.banner{
+  background:#fff; border:2px solid var(--line); border-radius:16px;
+  padding:14px 24px; margin-bottom:16px;
+  font-size:20px; font-weight:800; text-align:center;
+  letter-spacing:0.3px;
+}
+
+/* ── FILTER BAR ── */
+.fbar{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  margin-bottom:16px;
+}
+.fbox{
+  background:#fff; border:2px solid var(--line); border-radius:14px;
+  padding:8px 14px; display:inline-flex; align-items:center; gap:10px;
+  font-weight:700; font-size:11px; letter-spacing:0.5px;
+  text-transform:uppercase;
+}
+.fbox label{color:var(--muted); font-weight:700}
+select{
+  font-family:inherit; font-size:13px; font-weight:600;
+  background:#fff; border:none; outline:none;
+  padding:4px 22px 4px 6px; cursor:pointer;
+  appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5'%3E%3Cpolyline points='6,9 12,15 18,9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 4px center;
+  text-transform:none; letter-spacing:0;
+  color:var(--ink);
+}
+
+/* ── KPI ROW ── */
+.krow{
+  display:grid; grid-template-columns:repeat(4, 1fr);
+  gap:14px; margin-bottom:16px;
+}
+.krow.k3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:900px){.krow{grid-template-columns:repeat(2,1fr)} .krow.k3{grid-template-columns:1fr}}
+
+.kpi{
+  background:#fff; border:2px solid var(--line); border-radius:18px;
+  padding:18px 16px; text-align:center;
+}
+.kpi .top{font-size:11px; font-weight:700; color:var(--ink2); letter-spacing:0.5px; margin-bottom:4px}
+.kpi .big{
+  font-size:42px; font-weight:800; line-height:1.05; color:var(--ink);
+  letter-spacing:-0.02em;
+}
+.kpi .sub{font-size:11px; color:var(--muted); margin-top:4px; font-weight:600}
+
+/* CW vs PW dual KPI */
+.kpi-dual{
+  background:#fff; border:2px solid var(--line); border-radius:18px;
+  padding:14px; text-align:center;
+}
+.kpi-dual .top{font-size:12px; font-weight:800; margin-bottom:8px; color:var(--ink2)}
+.kpi-dual .pair{display:flex; justify-content:space-around; align-items:flex-start; gap:10px}
+.kpi-dual .pair > div{flex:1}
+.kpi-dual .pair .num{font-size:28px; font-weight:800; line-height:1; color:var(--ink)}
+.kpi-dual .pair .lbl{font-size:10px; color:var(--muted); margin-top:4px; font-weight:700; letter-spacing:0.4px}
+
+/* Growth KPI */
+.kpi-growth .big.up{color:var(--green)}
+.kpi-growth .big.down{color:var(--red)}
+.kpi-growth .pct{font-size:14px; margin-top:2px; font-weight:700}
+.kpi-growth .pct.up{color:var(--green)}
+.kpi-growth .pct.down{color:var(--red)}
+
+/* ── CHART CARD ── */
+.chartcard{
+  background:#fff; border:2px solid var(--line); border-radius:18px;
+  padding:18px 20px; margin-bottom:16px;
+}
+.chartcard .title{
+  text-align:center; font-size:15px; font-weight:800;
+  margin-bottom:12px; color:var(--ink);
+}
+.chartcard .legend{
+  display:flex; justify-content:center; gap:24px; margin-bottom:12px;
+  font-size:12px; font-weight:600; color:var(--ink2);
+}
+.chartcard .legend .swatch{
+  display:inline-block; width:10px; height:10px; border-radius:50%;
+  margin-right:6px; vertical-align:middle;
+}
+.chart-wrap{position:relative; height:340px}
+.chart-wrap.short{height:260px}
+
+/* ── TABLE ── */
+.tw{overflow-x:auto; border:2px solid var(--line); border-radius:14px}
+table{width:100%; border-collapse:collapse; font-size:12.5px; background:#fff}
+th{
+  background:var(--primary); color:#fff; font-weight:700;
+  padding:10px 12px; text-align:center; white-space:nowrap;
+  font-size:11px; text-transform:uppercase; letter-spacing:0.4px;
+}
+th.tl, td.tl{text-align:left}
+td{padding:9px 12px; text-align:center; border-bottom:1px solid #e5e7eb}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:#ffffff06}
-.tl{text-align:left!important;font-weight:600}
-tfoot td{background:var(--surface);font-weight:700;border-top:2px solid var(--border2)}
-.flag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.gr{background:#10b98118;color:var(--green);border:1px solid #10b98130}
-.yw{background:#f59e0b18;color:var(--amber);border:1px solid #f59e0b30}
-.rd{background:#ef444418;color:var(--red);border:1px solid #ef444430}
-.pb{background:#0f1e33;border-radius:20px;height:6px;overflow:hidden}
-.pf{height:100%;border-radius:20px;transition:width .5s ease}
-.barchart{display:flex;align-items:flex-end;gap:3px;height:190px}
-.bgroup{flex:1;display:flex;flex-direction:column;align-items:center}
-.bpair{display:flex;align-items:flex-end;gap:2px;height:165px;position:relative}
-.chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
-.chart-scroll .barchart{min-width:max-content}
-.chart-scroll .bgroup{flex:0 0 auto;min-width:50px}
-.bar{border-radius:4px 4px 0 0;min-width:16px;width:16px;transition:height .5s ease;position:relative}
-.bar-label{font-size:9px;font-weight:700;margin-bottom:3px;white-space:nowrap}
-.blabel{font-size:10px;color:#94a3b8;margin-top:5px;text-align:center;white-space:nowrap}
-.hcell{padding:6px 2px;border-radius:5px;text-align:center;font-size:11px;font-weight:600;flex:1;min-width:36px}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+tr:hover td{background:#f9fafb}
+.up{color:var(--green); font-weight:700}
+.down{color:var(--red); font-weight:700}
+.rank{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:24px; height:24px; border-radius:50%;
+  background:#e5e7eb; color:var(--ink); font-size:11px; font-weight:800;
+}
+.rank.gold{background:var(--amber); color:#000}
+.rank.silver{background:#9ca3af; color:#000}
+.rank.bronze{background:#b45309; color:#fff}
 
+/* ── FUNNEL ── */
+.funnel{display:flex; flex-direction:column; gap:6px}
+.funnel-row{
+  display:grid; grid-template-columns:110px 1fr 80px 70px;
+  gap:12px; align-items:center;
+}
+.funnel-label{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px}
+.funnel-bar{
+  height:30px; display:flex; align-items:center; justify-content:flex-end;
+  padding:0 12px; color:#fff; font-weight:700;
+  font-variant-numeric:tabular-nums; border-radius:5px; font-size:13px;
+}
+.fb1{background:#5a2a82}
+.fb2{background:#7c3aed}
+.fb3{background:#3b82f6}
+.fb4{background:#f59e0b; color:#000}
+.fb5{background:#fb923c}
+.fb6{background:#dc2626}
+.funnel-pct{color:var(--primary); font-variant-numeric:tabular-nums; text-align:right; font-weight:700}
+.funnel-val{text-align:right; font-variant-numeric:tabular-nums; font-weight:800; color:var(--ink)}
 
-/* ── LOGIN SCREEN ── */
-.login-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center}
-.login-box{background:var(--card);border:1px solid var(--border2);border-radius:16px;padding:40px 44px;width:calc(100% - 24px);max-width:420px;box-shadow:0 20px 60px #000a}
-.login-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--amber);text-align:center;margin-bottom:4px;letter-spacing:2px}
-.login-sub{text-align:center;color:var(--muted);font-size:12px;margin-bottom:28px}
-.login-label{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px;font-weight:600;display:block}
-.login-input{width:100%;background:#0d1b2e;border:1.5px solid var(--border2);color:#fff !important;padding:11px 14px;border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;outline:none;margin-bottom:14px;transition:.2s}
-.login-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px #f59e0b22}
-.login-input::placeholder{color:#475569}
-.login-btn{width:100%;background:var(--amber);color:#000;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;font-family:'Syne',sans-serif;letter-spacing:.5px;margin-top:6px;transition:.2s}
-.login-btn:hover{background:#fbbf24;transform:translateY(-1px)}
-.login-btn:disabled{opacity:.5;cursor:wait;transform:none}
-.login-err{background:#ef444415;border:1px solid #ef444440;color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;text-align:center}
-.login-progress{width:100%;height:3px;background:var(--border);border-radius:2px;margin-top:14px;display:none;overflow:hidden}
-.login-progress-fill{height:100%;background:var(--amber);border-radius:2px;transition:width .4s ease}
-.login-msg{text-align:center;color:var(--muted);font-size:12px;margin-top:8px;display:none}
-.login-lock{font-size:46px;text-align:center;margin-bottom:12px}
-.login-footer{text-align:center;font-size:10px;color:#334155;margin-top:18px;line-height:1.6}
+.empty,.loading{
+  padding:40px; text-align:center; color:var(--muted); font-size:13px;
+  background:#fff; border:2px solid var(--line); border-radius:14px;
+}
+.loading::after{
+  content:''; display:inline-block; width:12px; height:12px; margin-left:10px;
+  border:2px solid var(--primary); border-top-color:transparent;
+  border-radius:50%; animation:spin .8s linear infinite; vertical-align:middle;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── LOGIN ── */
+.login-overlay{
+  position:fixed; inset:0; z-index:9999; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.login-box{
+  background:#fff; border:2px solid var(--line); border-radius:18px;
+  padding:36px 40px; width:100%; max-width:400px; text-align:center;
+}
+.login-box .icon{font-size:42px; margin-bottom:8px}
+.login-box .title{font-size:24px; font-weight:800; color:var(--primary); margin-bottom:4px; letter-spacing:1px}
+.login-box .sub{font-size:12px; color:var(--muted); margin-bottom:24px}
+.login-input{
+  width:100%; padding:12px 14px; font-size:14px; font-family:inherit;
+  border:2px solid var(--line); border-radius:10px; outline:none;
+  margin-bottom:14px;
+}
+.login-input:focus{border-color:var(--primary)}
+.login-btn{
+  width:100%; padding:13px; background:var(--primary); color:#fff;
+  border:none; border-radius:10px; font-size:14px; font-weight:700;
+  cursor:pointer; font-family:inherit; letter-spacing:0.5px;
+}
+.login-btn:hover{background:#4a1f6e}
+.login-btn:disabled{opacity:.5; cursor:wait}
+.login-err{
+  background:#fee2e2; border:1px solid #fca5a5; color:#991b1b;
+  border-radius:8px; padding:10px; font-size:12px; margin-bottom:14px;
+  display:none;
+}
 #app{display:none}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
-.shake{animation:shake .35s ease}
+@keyframes shake{0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)}}
+.shake{animation:shake .3s ease}
 
-/* ── TABS SCROLL INDICATOR ─────────────────────────────────── */
-.tabs-wrap{
-  position:relative;
-  flex:1;
-  min-width:0;
-  display:flex;
-  align-items:center;
-}
-/* Fade gradient on right — hints more tabs to scroll */
-.tabs-fade{
-  position:absolute;
-  right:0;
-  top:0;
-  bottom:0;
-  width:40px;
-  background:linear-gradient(to right, transparent, #060d1a);
-  pointer-events:none;
-  z-index:2;
-  transition:opacity .3s;
-  border-radius:0 6px 6px 0;
-}
-.tabs-fade.hidden{opacity:0}
-
-/* On desktop: hide the fade (not needed) */
-@media(min-width:601px){
-  .tabs-fade{display:none}
-}
-
-/* ── MOBILE SCROLLBAR ─────────────────────────────────────── */
 @media(max-width:600px){
-  /* Show a thin visible scrollbar on tabs */
-  .tabs{
-    scrollbar-width:thin;
-    scrollbar-color:var(--amber) transparent;
-    padding-bottom:4px;  /* space for scrollbar */
-  }
-  .tabs::-webkit-scrollbar{
-    display:block !important;
-    height:3px;
-  }
-  .tabs::-webkit-scrollbar-track{
-    background:var(--border);
-    border-radius:2px;
-  }
-  .tabs::-webkit-scrollbar-thumb{
-    background:var(--amber);
-    border-radius:2px;
-  }
-
-  /* Tabs container */
-  .tabs-wrap{flex:none;width:100%;order:2}
-  .tabs{width:100%}
-
-  /* Tab dots indicator below tabs */
-  .tabs-wrap::after{
-    content:'swipe to see more tabs →';
-    display:block;
-    position:absolute;
-    bottom:-16px;
-    right:0;
-    font-size:9px;
-    color:var(--muted);
-    opacity:.6;
-    white-space:nowrap;
-    pointer-events:none;
-  }
+  body{padding:12px}
+  .banner{font-size:16px; padding:10px 14px}
+  .kpi .big{font-size:30px}
+  .kpi-dual .pair .num{font-size:22px}
 }
-
-/* ── MOBILE NAV LAYOUT ──────────────────────────────────────── */
-@media(max-width:600px){
-  .nav{
-    padding:6px 10px;
-    min-height:auto;
-    gap:6px;
-    flex-wrap:wrap;
-  }
-  .brand{font-size:14px;margin-right:4px;order:0}
-  .brand span{display:none}
-  .nav-r{margin-left:auto;gap:5px;order:1;flex-shrink:0}
-  .rbtn{padding:4px 8px;font-size:10.5px;border-radius:5px}
-  #status{display:none}
-
-  /* Tabs row takes full width below brand+buttons */
-  .tabs-wrap{
-    order:3;
-    width:100%;
-    margin-top:2px;
-    padding-bottom:18px; /* space for "swipe" hint */
-  }
-  .tab{padding:5px 11px;font-size:11.5px}
-
-  /* PAGES */
-  .page{padding:10px}
-
-  /* KPI — 2 per row */
-  .krow{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-  .kpi{padding:10px 11px;border-radius:8px}
-  .kval{font-size:17px}
-  .klabel{font-size:9px;letter-spacing:.4px}
-  .ksub{font-size:10px;margin-top:2px}
-
-  /* Cards */
-  .card{padding:11px;border-radius:8px}
-  .g2,.g3{grid-template-columns:1fr;gap:9px;margin-bottom:10px}
-  .gf{margin-bottom:10px}
-  .st{font-size:13px;margin-bottom:9px}
-
-  /* Filters */
-  .fbar{gap:6px;margin-bottom:9px}
-  .fbar label{font-size:10px}
-  select{padding:6px 26px 6px 8px;font-size:11.5px;min-height:32px;border-radius:6px}
-
-  /* Tables */
-  table{font-size:11px}
-  th{padding:6px 7px;font-size:9.5px;letter-spacing:.2px}
-  td{padding:6px 7px;font-size:11px}
-
-  /* Bar chart */
-  .barchart{height:140px;gap:2px}
-  .blabel{font-size:8px;margin-top:3px}
-  .bar{min-width:10px;width:10px}
-
-  /* Heatmap */
-  .hcell{font-size:9px;padding:4px 1px;min-width:26px;border-radius:4px}
-
-  /* Login */
-  .login-overlay{align-items:flex-start;padding-top:30px}
-  .login-box{padding:24px 18px;border-radius:12px;width:calc(100% - 20px)}
-  .login-lock{font-size:34px;margin-bottom:8px}
-  .login-logo{font-size:20px;letter-spacing:1px}
-  .login-sub{font-size:11px;margin-bottom:18px}
-  .login-input{padding:10px 12px;font-size:13px;margin-bottom:11px}
-  .login-btn{padding:12px;font-size:13px}
-  .login-footer{font-size:9.5px;margin-top:14px}
-
-}
-
-/* ── Tablet 860px ─────────────────────────────────────────── */
-@media(max-width:860px){
-  .g2{grid-template-columns:1fr}
-  .krow{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
-}
-
-/* ── Small phone 420px ────────────────────────────────────── */
-@media(max-width:420px){
-  .brand{font-size:13px}
-  .tab{padding:4px 9px;font-size:11px}
-  .rbtn{padding:3px 7px;font-size:10px}
-  .kval{font-size:15px}
-  .page{padding:8px}
-  .card{padding:9px}
-  .kpi{padding:9px 10px}
-  table{font-size:10.5px}
-  th{padding:5px 6px;font-size:9px}
-  td{padding:5px 6px}
-  .blabel{font-size:7.5px}
-}
-
-/* ── Very small 360px ─────────────────────────────────────── */
-@media(max-width:360px){
-  .brand{font-size:12px}
-  .tab{padding:3px 7px;font-size:10.5px}
-  .kval{font-size:14px}
-  .kpi{padding:8px 9px}
-  .page{padding:7px}
-  .card{padding:8px}
-  table{font-size:10px}
-  th{padding:4px 5px;font-size:8.5px}
-  td{padding:4px 5px}
-}
-
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
-<div id="loginScreen" class="login-overlay">
+<div class="login-overlay" id="loginScreen">
   <div class="login-box" id="loginBox">
-    <div class="login-lock">🔐</div>
-    <div class="login-logo">S&M DASHBOARD</div>
-    <div class="login-sub">FY 2026-27 &nbsp;|&nbsp; Authorised Access Only</div>
-    <div class="login-err" id="loginErr"></div>
-    <label class="login-label">Username</label>
-    <input class="login-input" id="loginUser" type="text" placeholder="Enter username"
-           autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/>
-    <label class="login-label">Password</label>
-    <input class="login-input" id="loginPass" type="password" placeholder="Enter password"
-           autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <div class="login-progress" id="loginProgress">
-      <div class="login-progress-fill" id="loginProgressFill" style="width:0%"></div>
-    </div>
-    <div class="login-msg" id="loginMsg"></div>
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN →</button>
-    <div class="login-footer">
-      🔒 Password used only to decrypt data locally in your browser.<br/>
-      No password or credentials are stored or transmitted.
-    </div>
+    <div class="icon">🔒</div>
+    <div class="title">S&amp;M</div>
+    <div class="sub">Weekly Dashboard</div>
+    <form id="loginForm">
+      <input type="password" class="login-input" id="passInput" placeholder="Password" required autofocus />
+      <div class="login-err" id="loginErr"></div>
+      <button type="submit" class="login-btn" id="loginBtn">Enter</button>
+    </form>
   </div>
 </div>
 
 <!-- APP -->
 <div id="app">
-<nav class="nav">
-  <div class="brand">S&M <span>FY 2026-27</span></div>
-  <div class="tabs-wrap">
-    <div class="tabs" id="tabsRow">
-      <div class="tab on"  onclick="nav('overview',this)">Overview</div>
-      <div class="tab" onclick="nav('projects',this)">Projects</div>
-      <div class="tab" onclick="nav('stm',this)">STM Wise</div>
-      <div class="tab" onclick="nav('meo',this)">MEO</div>
-      <div class="tab" onclick="nav('saletype',this)">Direct vs CP</div>
-      <div class="tab" onclick="nav('marketing',this)">Marketing</div>
-      <div class="tab" onclick="nav('yoy',this)">YoY Compare</div>
-      <div class="tab" onclick="nav('inventory',this)">Inventory</div>
+
+  <div class="nav">
+    <div class="brand">S&amp;M <span>Weekly Performance</span></div>
+    <div class="tabs" id="tabs">
+      <div class="tab on" data-page="inquiry">CW vs PW Inquiry</div>
+      <div class="tab" data-page="leads">Hot Leads &amp; Cost</div>
+      <div class="tab" data-page="units">Units Booked</div>
+      <div class="tab" data-page="revenue">Revenue</div>
+      <div class="tab" data-page="trends">Weekly Trends</div>
+      <div class="tab" data-page="funnel">Funnel</div>
+      <div class="tab" data-page="leaderboard">Leaderboard</div>
     </div>
-    <div class="tabs-fade" id="tabsFade"></div>
+    <div class="nav-r">
+      <span class="status" id="status"><span class="dot load"></span>Loading…</span>
+      <button class="rbtn primary" id="reloadBtn">↻ Reload</button>
+      <button class="rbtn" id="logoutBtn">Logout</button>
+    </div>
   </div>
-  <div class="nav-r">
-    <span class="status" id="status"></span>
-    <button class="rbtn" id="reloadBtn" onclick="reloadData()" style="display:none">↻ Reload Data</button>
-    <button class="rbtn" id="logoutBtn" onclick="doLogout()" style="display:none;background:#ef4444;color:#fff;margin-left:6px">⏻ Logout</button>
+
+  <!-- ════ PAGE 1: INQUIRY ════ -->
+  <div class="page on" id="page-inquiry">
+    <div class="banner">Current Week Inquiry VS Previous Week Inquiry</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_inq_project"></select></div>
+    </div>
+    <div class="krow">
+      <div class="kpi"><div class="top">Total Projects</div><div class="big" id="kpi_inq_total">0</div></div>
+      <div class="kpi-dual"><div class="top">CW vs PW</div>
+        <div class="pair">
+          <div><div class="num" id="kpi_inq_cw">0</div><div class="lbl">CW Inquiry</div></div>
+          <div><div class="num" id="kpi_inq_pw">0</div><div class="lbl">PW Inquiry</div></div>
+        </div>
+      </div>
+      <div class="kpi kpi-growth"><div class="top">Inquiry Growth</div>
+        <div class="big" id="kpi_inq_growth">0</div>
+        <div class="pct" id="kpi_inq_pct">—</div>
+      </div>
+      <div class="kpi"><div class="top">Cumulative Inquiry</div><div class="big" id="kpi_inq_cum">0</div></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">CW Inquiry and PW Inquiry by Projects</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#5a2a82"></span>CW Inquiry</span>
+        <span><span class="swatch" style="background:#c39ad2"></span>PW Inquiry</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch_inq"></canvas></div>
+    </div>
   </div>
-</nav>
-<div id="page-overview"  class="page on"></div>
-<div id="page-projects"  class="page"></div>
-<div id="page-stm"       class="page"></div>
-<div id="page-meo"       class="page"></div>
-<div id="page-saletype"  class="page"></div>
-<div id="page-marketing" class="page"></div>
-<div id="page-yoy"       class="page"></div>
-<div id="page-inventory" class="page"></div>
+
+  <!-- ════ PAGE 2: HOT LEADS / COST ════ -->
+  <div class="page" id="page-leads">
+    <div class="banner">Hot Leads &amp; Cost of Inquiry — CW vs PW</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_leads_project"></select></div>
+    </div>
+    <div class="krow">
+      <div class="kpi-dual"><div class="top">Hot Leads — CW vs PW</div>
+        <div class="pair">
+          <div><div class="num" id="kpi_hot_cw">0</div><div class="lbl">CW</div></div>
+          <div><div class="num" id="kpi_hot_pw">0</div><div class="lbl">PW</div></div>
+        </div>
+      </div>
+      <div class="kpi kpi-growth"><div class="top">Hot Leads Growth</div>
+        <div class="big" id="kpi_hot_growth">0</div>
+        <div class="pct" id="kpi_hot_pct">—</div>
+      </div>
+      <div class="kpi-dual"><div class="top">Cost of Inquiry — CW vs PW</div>
+        <div class="pair">
+          <div><div class="num" id="kpi_cost_cw">₹0</div><div class="lbl">CW</div></div>
+          <div><div class="num" id="kpi_cost_pw">₹0</div><div class="lbl">PW</div></div>
+        </div>
+      </div>
+      <div class="kpi kpi-growth"><div class="top">Cost Growth</div>
+        <div class="big" id="kpi_cost_growth">₹0</div>
+        <div class="pct" id="kpi_cost_pct">—</div>
+      </div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Hot Leads — CW vs PW by Projects</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#dc2626"></span>CW Hot Leads</span>
+        <span><span class="swatch" style="background:#fca5a5"></span>PW Hot Leads</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch_hot"></canvas></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Cost of Inquiry — CW vs PW by Projects</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#3b82f6"></span>CW Cost</span>
+        <span><span class="swatch" style="background:#93c5fd"></span>PW Cost</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch_cost"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE 3: UNITS BOOKED ════ -->
+  <div class="page" id="page-units">
+    <div class="banner">Units Booked — CW vs PW</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_units_project"></select></div>
+    </div>
+    <div class="krow k3">
+      <div class="kpi-dual"><div class="top">Units — CW vs PW</div>
+        <div class="pair">
+          <div><div class="num" id="kpi_un_cw">0</div><div class="lbl">CW</div></div>
+          <div><div class="num" id="kpi_un_pw">0</div><div class="lbl">PW</div></div>
+        </div>
+      </div>
+      <div class="kpi kpi-growth"><div class="top">Units Growth</div>
+        <div class="big" id="kpi_un_growth">0</div>
+        <div class="pct" id="kpi_un_pct">—</div>
+      </div>
+      <div class="kpi"><div class="top">Cumulative Units</div><div class="big" id="kpi_un_cum">0</div></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Units Booked — CW vs PW by Projects</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#16a34a"></span>CW Units</span>
+        <span><span class="swatch" style="background:#86efac"></span>PW Units</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch_units"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE 4: REVENUE ════ -->
+  <div class="page" id="page-revenue">
+    <div class="banner">Revenue Came — CW vs PW</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_rev_project"></select></div>
+    </div>
+    <div class="krow k3">
+      <div class="kpi-dual"><div class="top">Revenue — CW vs PW</div>
+        <div class="pair">
+          <div><div class="num" id="kpi_rev_cw">₹0</div><div class="lbl">CW</div></div>
+          <div><div class="num" id="kpi_rev_pw">₹0</div><div class="lbl">PW</div></div>
+        </div>
+      </div>
+      <div class="kpi kpi-growth"><div class="top">Revenue Growth</div>
+        <div class="big" id="kpi_rev_growth">₹0</div>
+        <div class="pct" id="kpi_rev_pct">—</div>
+      </div>
+      <div class="kpi"><div class="top">Cumulative Revenue</div><div class="big" id="kpi_rev_cum">₹0</div></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Revenue Came — CW vs PW by Projects</div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#f59e0b"></span>CW Revenue</span>
+        <span><span class="swatch" style="background:#fcd34d"></span>PW Revenue</span>
+      </div>
+      <div class="chart-wrap"><canvas id="ch_rev"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE 5: WEEKLY TRENDS ════ -->
+  <div class="page" id="page-trends">
+    <div class="banner">Weekly Trends</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_tr_project"></select></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Revenue trend (week by week)</div>
+      <div class="chart-wrap short"><canvas id="ch_trend_rev"></canvas></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Inquiry trend (week by week)</div>
+      <div class="chart-wrap short"><canvas id="ch_trend_inq"></canvas></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Hot Leads trend (week by week)</div>
+      <div class="chart-wrap short"><canvas id="ch_trend_hot"></canvas></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Units Booked trend (week by week)</div>
+      <div class="chart-wrap short"><canvas id="ch_trend_un"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE 6: FUNNEL ════ -->
+  <div class="page" id="page-funnel">
+    <div class="banner">Marketing Funnel — Current Week</div>
+    <div class="fbar">
+      <div class="fbox"><label>Project</label><select id="f_fun_project"></select></div>
+    </div>
+    <div class="chartcard">
+      <div class="title">MQL → Booked Units</div>
+      <div class="funnel" id="funnelView"></div>
+      <div class="krow k3" style="margin-top:18px">
+        <div class="kpi"><div class="top">MQL → Booked</div><div class="big" id="conv_mb">—</div></div>
+        <div class="kpi"><div class="top">SV → Hot</div><div class="big" id="conv_sh">—</div></div>
+        <div class="kpi"><div class="top">Hot → Booked</div><div class="big" id="conv_hb">—</div></div>
+      </div>
+    </div>
+    <div class="chartcard">
+      <div class="title">Funnel by project (current week)</div>
+      <div class="tw"><table id="funnelTable"></table></div>
+    </div>
+  </div>
+
+  <!-- ════ PAGE 7: LEADERBOARD ════ -->
+  <div class="page" id="page-leaderboard">
+    <div class="banner">STM Leaderboard</div>
+    <div class="fbar">
+      <div class="fbox"><label>Range</label>
+        <select id="lbRange">
+          <option value="this">This week</option>
+          <option value="last">Last week</option>
+          <option value="4w">Last 4 weeks</option>
+          <option value="all" selected>All time</option>
+        </select>
+      </div>
+      <div class="fbox"><label>Sort by</label>
+        <select id="lbSort">
+          <option value="units" selected>Units Booked</option>
+          <option value="sales">Sales Booked</option>
+          <option value="hot">Hot Leads</option>
+        </select>
+      </div>
+    </div>
+    <div class="chartcard">
+      <div class="tw"><table id="lbTable"></table></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
+// ════════════════════════════════════════════════════
+// State + helpers
+// ════════════════════════════════════════════════════
+let SALES = [], MKTG = [], PASSWORD = '';
+const charts = {};
+if (window.Chart && Chart.register && window.ChartDataLabels) Chart.register(ChartDataLabels);
 
+const fmtInt = n => (n == null || isNaN(n)) ? '0' : Math.round(n).toLocaleString('en-IN');
+const fmtMoney = n => {
+  if (n == null || isNaN(n)) return '₹0';
+  const sign = n < 0 ? '-' : '';
+  n = Math.abs(n);
+  if (n === 0) return '₹0';
+  if (n >= 10000000) return sign + '₹' + (n/10000000).toFixed(2) + ' Cr';
+  if (n >= 100000)   return sign + '₹' + (n/100000).toFixed(2)  + ' L';
+  if (n >= 1000)     return sign + '₹' + (n/1000).toFixed(1)    + ' K';
+  return sign + '₹' + Math.round(n).toLocaleString('en-IN');
+};
+const fmtPct = (a,b) => (!b || b===0) ? '—' : ((a/b)*100).toFixed(1) + '%';
+const growthPct = (cw, pw) => {
+  if (!pw || pw === 0) return null;
+  return ((cw - pw) / pw) * 100;
+};
 
-// ── Safe to be visible — sheet only has encrypted gibberish ──
-var SHEET_ID = '1xHMsoWsWPMtXFzhC03SP68EMvS0Ywilvpl84HLBGFAc';
-
-
-var ALLOWED_USERS = ['admin', 'manager', 'sales'];
-
-
-function hexToBytes(hex) {
-  var b = new Uint8Array(hex.length / 2);
-  for (var i = 0; i < hex.length; i += 2)
-    b[i/2] = parseInt(hex.substring(i, i+2), 16);
-  return b;
-}
-
-async function deriveKey(password, saltBytes) {
-  var passBytes = new TextEncoder().encode(password);
-  var base = await crypto.subtle.importKey('raw', passBytes, 'PBKDF2', false, ['deriveKey']);
-  return crypto.subtle.deriveKey(
-    {name:'PBKDF2', salt:saltBytes, iterations:100000, hash:'SHA-256'},
-    base,
-    {name:'AES-GCM', length:256},
-    false,
-    ['decrypt']
-  );
-}
-
-async function decryptPayload(encHex, password) {
-  // Parse packed format: salt(32hex) + iv(24hex) + authTag(32hex) + data
-  var salt = hexToBytes(encHex.substring(0, 32));
-  var iv   = hexToBytes(encHex.substring(32, 56));
-  var tag  = hexToBytes(encHex.substring(56, 88));
-  var data = hexToBytes(encHex.substring(88));
-
-  var key = await deriveKey(password, salt);
-
-  // Web Crypto AES-GCM expects ciphertext + authTag concatenated
-  var combined = new Uint8Array(data.length + tag.length);
-  combined.set(data, 0);
-  combined.set(tag, data.length);
-
-  // This THROWS if password is wrong — no check needed
-  var dec = await crypto.subtle.decrypt({name:'AES-GCM', iv:iv}, key, combined);
-  return JSON.parse(new TextDecoder().decode(dec));
-}
-
-// ════════════════════════════════════════════════════════
-//  FETCH ENCRYPTED DATA FROM GOOGLE SHEETS
-// ════════════════════════════════════════════════════════
-
-async function fetchFromSheets() {
-  setLoginMsg('Fetching data from Google Sheets…');
-  setLoginProgress(20);
-
-  var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID +
-            '/gviz/tq?tqx=out:csv&sheet=EncryptedData&t=' + Date.now();
-  var res = await fetch(url);
-  if (!res.ok) throw new Error('Cannot reach Google Sheets. Check Sheet ID and sharing settings.');
-  var csv = await res.text();
-
-  // Parse CSV key,value rows (handle quoted values)
-  var map = {};
-  csv.trim().split('\n').forEach(function(row) {
-    var comma = row.indexOf(',');
-    if (comma < 0) return;
-    var k = row.substring(0, comma).replace(/^"|"$/g, '').trim();
-    var v = row.substring(comma + 1).replace(/^"|"$/g, '').replace(/""/g, '"').trim();
-    if (k) map[k] = v;
-  });
-
-  var n = parseInt(map['total_chunks'] || '1');
-  var enc = '';
-  for (var i = 1; i <= n; i++) enc += (map['CHUNK_' + i] || '');
-  if (!enc) throw new Error('No encrypted data in Google Sheets. Run encrypt_data.js first.');
-  return enc;
-}
-
-// ════════════════════════════════════════════════════════
-//  LOGIN — no credential check, just decrypt
-// ════════════════════════════════════════════════════════
-
-var D = null, currentPage = 'overview';
-var MONTH_ORDER = ['April','May','June','July','August','September',
-                   'October','November','December','January','February','March'];
-var _encCache = null;  // cache encrypted blob, store password in memory for reload
-
-async function doLogin() {
-  var username = document.getElementById('loginUser').value.trim();
-  var password = document.getElementById('loginPass').value;
-
-  // Clear previous error
-  document.getElementById('loginErr').style.display = 'none';
-
-  // Basic validation
-  if (!username || !password) {
-    showLoginErr('Please enter username and password');
-    return;
-  }
-
-  // Check username exists (no password check — password proved by decryption)
-  if (ALLOWED_USERS.indexOf(username) === -1) {
-    showLoginErr('Username not recognised');
-    document.getElementById('loginBox').classList.add('shake');
-    setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
-    return;
-  }
-
-  // Disable button, show progress
-  setBusy(true);
-
+// ════════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════════
+document.getElementById('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const pass = document.getElementById('passInput').value;
+  const err = document.getElementById('loginErr');
+  const btn = document.getElementById('loginBtn');
+  err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Verifying…';
   try {
-    var encHex;
-
-    if (SHEET_ID === 'YOUR_GOOGLE_SHEET_ID_HERE') {
-      // Demo mode — Sheet ID not configured yet
-      setLoginMsg('Loading demo data…');
-      setLoginProgress(50);
-      await new Promise(function(r){ setTimeout(r, 500); });
-      D = getDemoData();
-      setLoginProgress(100);
-    } else {
-      // Step 1: Fetch encrypted data from Google Sheets
-      encHex = await fetchFromSheets();
-      _encCache = {hex: encHex, pass: password}; // store in memory for reload
-
-      // Step 2: Decrypt with the entered password
-      // If password is WRONG → AES-GCM auth tag fails → throws → catch below
-      setLoginMsg('Decrypting with your password…');
-      setLoginProgress(65);
-
-      var raw;
-      try {
-        raw = await decryptPayload(encHex, password);
-      } catch(e) {
-        // Decryption failed = wrong password
-        document.getElementById('loginBox').classList.add('shake');
-        setTimeout(function(){ document.getElementById('loginBox').classList.remove('shake'); }, 400);
-        setBusy(false);
-        setLoginProgress(0);
-        showLoginErr('Wrong password — please try again');
-        return;
-      }
-
-      setLoginProgress(90);
-      D = processData(raw);
-    }
-
-    // Step 3: Show dashboard
-    setLoginProgress(100);
-    await new Promise(function(r){ setTimeout(r, 200); });
-
+    const j = await fetchData(pass);
+    if (!j.ok) throw new Error(j.error || 'Invalid password');
+    PASSWORD = pass;
+    sessionStorage.setItem('sm_pass', pass);
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').style.display = 'block';
-    document.getElementById('reloadBtn').style.display = 'inline-block';
-    document.getElementById('logoutBtn').style.display = 'inline-block';
-    document.getElementById('status').innerHTML =
-      '<span class="dot ok"></span>' + username + ' · Live';
-
-    // Reset all pages, set overview as active
-    document.querySelectorAll('.page').forEach(function(p) {
-      p.classList.remove('on');
-      p.innerHTML = '';
-    });
-    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
-    document.querySelector('.tab').classList.add('on');
-    currentPage = 'overview';
-    document.getElementById('page-overview').classList.add('on');
-
-    // Render overview immediately
-    try {
-      ovR();
-      buildFilters();
-    } catch(err) {
-      console.error('Render error:', err);
-      document.getElementById('page-overview').innerHTML =
-        '<div style="color:var(--red);padding:20px;font-size:14px">⚠ Render error: ' + err.message + '<br><br>Please click Reload Data button above.</div>';
-    }
-
-  } catch(e) {
-    setBusy(false);
-    setLoginProgress(0);
-    showLoginErr(e.message || 'An error occurred');
-  }
-}
-
-// ── Reload (uses cached password in memory) ──────────────
-async function reloadData() {
-  if (!_encCache) {
-    // No cache — re-fetch from sheets
-    document.getElementById('reloadBtn').disabled = true;
-    document.getElementById('status').innerHTML = '<span class="dot load"></span>Refreshing…';
-    try {
-      _encCache = {hex: await fetchFromSheets(), pass: _encCache ? _encCache.pass : ''};
-    } catch(e) {
-      document.getElementById('status').innerHTML = '<span class="dot err"></span>' + e.message;
-      document.getElementById('reloadBtn').disabled = false;
-      return;
-    }
-  }
-  document.getElementById('reloadBtn').disabled = true;
-  document.getElementById('status').innerHTML = '<span class="dot load"></span>Refreshing…';
-  try {
-    // Force re-fetch fresh data
-    var enc = await fetchFromSheets();
-    var raw = await decryptPayload(enc, _encCache.pass);
-    _encCache.hex = enc;
-    D = processData(raw);
-    document.getElementById('status').innerHTML =
-      '<span class="dot ok"></span>Updated · ' + new Date().toLocaleTimeString();
-    buildFilters();
-    render(currentPage);
-  } catch(e) {
-    document.getElementById('status').innerHTML = '<span class="dot err"></span>' + e.message;
-  }
-  document.getElementById('reloadBtn').disabled = false;
-}
-
-// ── Logout — wipes everything from memory ────────────────
-function doLogout() {
-  D = null;
-  _encCache = null;   // wipe password from memory
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginUser').value = '';
-  document.getElementById('reloadBtn').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'none';
-  document.getElementById('loginErr').style.display = 'none';
-  setBusy(false);
-  setLoginProgress(0);
-  document.getElementById('loginUser').focus();
-
-// ── Tab scroll indicator (mobile) ─────────────────────────────
-(function(){
-  var tabsRow  = document.getElementById('tabsRow');
-  var tabsFade = document.getElementById('tabsFade');
-  if (!tabsRow || !tabsFade) return;
-
-  function updateFade(){
-    var atEnd = tabsRow.scrollLeft + tabsRow.clientWidth >= tabsRow.scrollWidth - 5;
-    tabsFade.classList.toggle('hidden', atEnd);
-  }
-
-  tabsRow.addEventListener('scroll', updateFade, {passive:true});
-  // Check on load
-  setTimeout(updateFade, 300);
-
-  // Auto-scroll active tab into view when nav() is called
-  var _origNav = window.nav;
-  window.nav = function(name, el){
-    _origNav(name, el);
-    // Scroll the clicked tab into view smoothly
-    if (el && el.scrollIntoView){
-      el.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
-    }
-    setTimeout(updateFade, 400);
-  };
-})();
-}
-
-// ── Demo data (when Sheet ID not set yet) ─────────────────
-function getDemoData() {
-  var P = ['VERDANT HEIGHTS','NEXORA','LUMINA AI','SERENE CREST','HALCYON','RIVIERA EDGE','ZK2'];
-  var T = {'VERDANT HEIGHTS':9,'NEXORA':1.8,'LUMINA AI':1.4,'SERENE CREST':4.2,'HALCYON':0.6,'RIVIERA EDGE':2.0,'ZK2':2.6};
-  var A = {'VERDANT HEIGHTS':7.1,'NEXORA':0.8,'LUMINA AI':0,'SERENE CREST':2.99,'HALCYON':0,'RIVIERA EDGE':0.71,'ZK2':1.3};
-  var M = MONTH_ORDER;
-  var sales = [];
-  M.forEach(function(m){ P.forEach(function(p){
-    var t=T[p]||1, a=m==='April'?(A[p]||0):0;
-    sales.push({Month:m,Project_name:p,Stm_name:'Arjun',Sales_type:'CP',Target:+(t*.4).toFixed(2),Actual:+(a*.4).toFixed(2)});
-    sales.push({Month:m,Project_name:p,Stm_name:'Rohan',Sales_type:'Direct',Target:+(t*.6).toFixed(2),Actual:+(a*.6).toFixed(2)});
-  });});
-  return processData({
-    sales: sales,
-    meo: P.map(function(p){ return {'Project Name':p,'Target (Current Month)':T[p]||1,'Actual till Date':A[p]||0,'Expected Closing':+(Math.random()*3+.5).toFixed(1)}; }),
-    inventory: P.map(function(p){ var s=Math.floor(Math.random()*30+30); return {'Project Name':p,Total_units:70,Units_sold:s,Units_Available:70-s,Potential:5}; }),
-    marketing: ['April','May','June'].reduce(function(acc,m){ return acc.concat(P.map(function(p){ return {Month:m,Project_Name:p,MQL_Target:500,MQL_Actual:m==='April'?Math.floor(Math.random()*400+100):0,SQL_Target:100,SQL_Actual:m==='April'?Math.floor(Math.random()*80+20):0,SV_Target:30,SV_Actual:m==='April'?Math.floor(Math.random()*25+5):0,Closures_Target:3,Closures_Actual:0}; })); }, []),
-    salesPY: M.reduce(function(acc,m){ return acc.concat(P.map(function(p){ return {Month:m,Project_Name:p,Actual:+(Math.random()*5+1).toFixed(2)}; })); }, []),
-  });
-}
-
-// ── UI helpers ────────────────────────────────────────────
-function showLoginErr(msg) {
-  var el = document.getElementById('loginErr');
-  el.textContent = msg; el.style.display = 'block';
-}
-function setBusy(on) {
-  document.getElementById('loginBtn').disabled = on;
-  document.getElementById('loginBtn').textContent = on ? 'Please wait…' : 'SIGN IN →';
-  document.getElementById('loginMsg').style.display = on ? 'block' : 'none';
-  document.getElementById('loginProgress').style.display = on ? 'block' : 'none';
-}
-function setLoginMsg(msg) { document.getElementById('loginMsg').textContent = msg; }
-function setLoginProgress(pct) { document.getElementById('loginProgressFill').style.width = pct + '%'; }
-
-// ── Navigation ────────────────────────────────────────────
-function nav(name, el) {
-  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('on'); });
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
-  document.getElementById('page-' + name).classList.add('on');
-  el.classList.add('on');
-  currentPage = name;
-  if (D) render(name);
-}
-function render(name) {
-  var fn = {overview:ovR,projects:prR,stm:stmR,meo:meoR,saletype:scR,marketing:mktR,yoy:yoyR,inventory:invR};
-  if (fn[name]) fn[name]();
-}
-function buildFilters() {
-  document.querySelectorAll('[data-type="month"]').forEach(function(el) {
-    var v = el.value;
-    el.innerHTML = '<option value="all">All Months</option>' +
-      D.months.map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join('');
-    el.value = v;
-  });
-  document.querySelectorAll('[data-type="project"]').forEach(function(el) {
-    var v = el.value;
-    el.innerHTML = '<option value="all">All Projects</option>' +
-      D.projects.map(function(p){ return '<option value="'+p+'">'+p+'</option>'; }).join('');
-    el.value = v;
-  });
-}
-
-var sum=function(arr,f){return arr.reduce(function(s,r){return s+(r[f]||0);},0);};
-var pct=function(a,b){return b>0?Math.round(a/b*100):0;};
-var gf=function(p){return p>=80?'gr':p>=50?'yw':'rd';};
-var fi=function(p){return p>=80?'🟢':p>=50?'🟡':'🔴';};
-var flag=function(p,l){return '<span class="flag '+gf(p)+'">'+fi(p)+' '+(l!=null?l:p+'%')+'</span>';};
-var cr=function(v){return v>0?'₹'+parseFloat(v).toFixed(2):'—';};
-var pb=function(p){var c=p>=80?'var(--green)':p>=50?'var(--amber)':'var(--red)';return '<div class="pb"><div class="pf" style="width:'+Math.min(p,100)+'%;background:'+c+'"></div></div>';};
-var kpi=function(label,val,sub,color){return '<div class="kpi" style="--kc:'+(color||'var(--amber)')+'"><div class="klabel">'+label+'</div><div class="kval">'+val+'</div><div class="ksub">'+sub+'</div></div>';};
-var FILTER_STATE={};
-function flt(month,project,type){return D.sales.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project)&&(type==='all'||!type||r.type===type);});}
-function pyFor(month,project){return D.salesPY.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);}).reduce(function(s,r){return s+r.actual;},0);}
-function mktFlt(month,project){return D.marketing.filter(function(r){return(month==='all'||!month||r.month===month)&&(project==='all'||!project||r.project===project);});}
-function groupBy(arr,key){return arr.reduce(function(acc,r){var k=r[key];(acc[k]=acc[k]||[]).push(r);return acc;},{});}
-function sel(id){var el=document.getElementById(id);var v=(el&&el.value)?el.value:'';if(v)FILTER_STATE[id]=v;return v||FILTER_STATE[id]||'all';}
-
-function processData(raw){
-  var sales=(raw.sales||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_name||'').trim(),stm:(r.Stm_name||'').trim(),type:(r.Sales_type||'').trim(),target:+r.Target||0,actual:+r.Actual||0};});
-  var meo=(raw.meo||[]).map(function(r){return{project:(r['Project Name']||'').trim(),target:+r['Target (Current Month)']||0,actual:+r['Actual till Date']||0,expected:+r['Expected Closing']||0};});
-  var inventory=(raw.inventory||[]).map(function(r){return{project:(r['Project Name']||'').trim(),total:+r['Total_units']||0,sold:+r['Units_sold']||0,available:+r['Units_Available']||0,potential:+r['Potential']||0};});
-  var marketing=(raw.marketing||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),mqlT:+r.MQL_Target||0,mqlA:+r.MQL_Actual||0,sqlT:+r.SQL_Target||0,sqlA:+r.SQL_Actual||0,svT:+r.SV_Target||0,svA:+r.SV_Actual||0,clT:+r.Closures_Target||0,clA:+r.Closures_Actual||0};});
-  var salesPY=(raw.salesPY||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),actual:+r.Actual||0};});
-  var projects=[...new Set(sales.map(function(r){return r.project;}))].filter(Boolean).sort();
-  var stms=[...new Set(sales.map(function(r){return r.stm;}))].filter(Boolean).sort();
-  var months=MONTH_ORDER.filter(function(m){return sales.some(function(r){return r.month===m;});});
-  return{sales:sales,meo:meo,inventory:inventory,marketing:marketing,salesPY:salesPY,projects:projects,stms:stms,months:months};
-}
-
-
-var sum=function(arr,f){return arr.reduce(function(s,r){return s+(r[f]||0);},0);};
-var pct=function(a,b){return b>0?Math.round(a/b*100):0;};
-var gf=function(p){return p>=80?'gr':p>=50?'yw':'rd';};
-var fi=function(p){return p>=80?'🟢':p>=50?'🟡':'🔴';};
-var flag=function(p,l){return '<span class="flag '+gf(p)+'">'+fi(p)+' '+(l!=null?l:p+'%')+'</span>';};
-var cr=function(v){return v>0?'₹'+parseFloat(v).toFixed(2):'—';};
-var pb=function(p){var c=p>=80?'var(--green)':p>=50?'var(--amber)':'var(--red)';return '<div class="pb"><div class="pf" style="width:'+Math.min(p,100)+'%;background:'+c+'"></div></div>';};
-var kpi=function(label,val,sub,color){return '<div class="kpi" style="--kc:'+(color||'var(--amber)')+'"><div class="klabel">'+label+'</div><div class="kval">'+val+'</div><div class="ksub">'+sub+'</div></div>';};
-
-var FILTER_STATE={};
-
-function flt(month,project,type){
-  var mArr=Array.isArray(month)?month:null;
-  var pArr=Array.isArray(project)?project:null;
-  return D.sales.filter(function(r){
-    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
-    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
-    var tOk=type==='all'||!type||r.type===type;
-    return mOk&&pOk&&tOk;
-  });
-}
-function pyFor(month,project){
-  var mArr=Array.isArray(month)?month:null;
-  var pArr=Array.isArray(project)?project:null;
-  return D.salesPY.filter(function(r){
-    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
-    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
-    return mOk&&pOk;
-  }).reduce(function(s,r){return s+r.actual;},0);
-}
-function mktFlt(month,project){
-  var mArr=Array.isArray(month)?month:null;
-  var pArr=Array.isArray(project)?project:null;
-  return D.marketing.filter(function(r){
-    var mOk=month==='all'||!month||(mArr?mArr.indexOf(r.month)>=0:r.month===month);
-    var pOk=project==='all'||!project||(pArr?pArr.indexOf(r.project)>=0:r.project===project);
-    return mOk&&pOk;
-  });
-}
-function groupBy(arr,key){return arr.reduce(function(acc,r){var k=r[key];(acc[k]=acc[k]||[]).push(r);return acc;},{});}
-function sel(id){
-  var el=document.getElementById(id);
-  var value=(el&&el.value)?el.value:'';
-  if(value) FILTER_STATE[id]=value;
-  return value||FILTER_STATE[id]||'all';
-}
-
-var MS_STATE={};
-var MS_OPEN=null;
-
-function getMS(id){
-  var s=MS_STATE[id];
-  if(!s||!s.length||s[0]==='all')return 'all';
-  return s;
-}
-function buildMS(id,type,cb){
-  var items=type==='month'?D.months:D.projects;
-  var allLabel=type==='month'?'All Months':'All Projects';
-  var sel=MS_STATE[id]||['all'];
-  var isAll=sel[0]==='all';
-  var label=isAll?allLabel:(sel.length<=2?sel.join(', '):sel.slice(0,2).join(', ')+' +'+(sel.length-2));
-  var opts='<label class="ms-opt"><input type="checkbox" value="all"'+(isAll?' checked':'')+' onchange="msChange(\''+id+'\',\''+cb+'\',this)"> '+allLabel+'</label>'+
-    items.map(function(v){
-      var chk=!isAll&&sel.indexOf(v)>=0?' checked':'';
-      return '<label class="ms-opt"><input type="checkbox" value="'+v+'"'+chk+' onchange="msChange(\''+id+'\',\''+cb+'\',this)"> '+v+'</label>';
-    }).join('');
-  var isOpen=MS_OPEN===id?' open':'';
-  return '<div class="ms-wrap"><div class="ms-btn" id="'+id+'_btn" onclick="toggleMSDD(\''+id+'\')">'+label+'</div>'+
-    '<div class="ms-dd'+isOpen+'" id="'+id+'_dd">'+opts+'</div></div>';
-}
-function toggleMSDD(id){
-  var dd=document.getElementById(id+'_dd');
-  if(!dd)return;
-  if(MS_OPEN===id){MS_OPEN=null;dd.classList.remove('open');}
-  else{MS_OPEN=id;document.querySelectorAll('.ms-dd').forEach(function(d){d.classList.remove('open');});dd.classList.add('open');}
-}
-function msChange(id,cb,el){
-  var dd=document.getElementById(id+'_dd');
-  var cbs=Array.from(dd.querySelectorAll('input[type=checkbox]'));
-  var allCb=cbs[0];
-  if(el.value==='all'){
-    if(!el.checked)el.checked=true;
-    cbs.forEach(function(c){if(c.value!=='all')c.checked=false;});
-    MS_STATE[id]=['all'];
-  }else{
-    allCb.checked=false;
-    var picked=cbs.filter(function(c){return c.value!=='all'&&c.checked;}).map(function(c){return c.value;});
-    if(!picked.length){allCb.checked=true;MS_STATE[id]=['all'];}
-    else MS_STATE[id]=picked;
-  }
-  window[cb]();
-}
-
-function setStatus(state,msg){var cls={ok:'ok',err:'err',load:'load'}[state];document.getElementById('status').innerHTML='<span class="dot '+cls+'"></span>'+msg;}
-function showError(msg){document.querySelectorAll('.page').forEach(function(p){p.innerHTML='<div class="ebox"><h3>⚠ Cannot Load Data</h3>'+msg+'</div>';});}
-
-function nav(name,el){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById('page-'+name).classList.add('on');
-  el.classList.add('on');
-  currentPage=name;
-  if(D)render(name);
-}
-function render(name){var fn={overview:ovR,projects:prR,stm:stmR,meo:meoR,saletype:scR,marketing:mktR,yoy:yoyR,inventory:invR};if(fn[name])fn[name]();}
-
-function buildFilters(){
-  document.querySelectorAll('[data-type="month"]').forEach(function(el){
-    var v=FILTER_STATE[el.id]||el.value||'all';
-    el.innerHTML='<option value="all">All Months</option>'+D.months.map(function(m){return '<option value="'+m+'">'+m+'</option>';}).join('');
-    el.value=v;
-    if(!el.value){
-      var selected=Array.from(el.options).find(function(o){return o.text===v;});
-      el.value=selected?selected.value:'all';
-    }
-    FILTER_STATE[el.id]=el.value;
-  });
-  document.querySelectorAll('[data-type="project"]').forEach(function(el){
-    var v=FILTER_STATE[el.id]||el.value||'all';
-    el.innerHTML='<option value="all">All Projects</option>'+D.projects.map(function(p){return '<option value="'+p+'">'+p+'</option>';}).join('');
-    el.value=v;
-    if(!el.value){
-      var selected=Array.from(el.options).find(function(o){return o.text===v;});
-      el.value=selected?selected.value:'all';
-    }
-    FILTER_STATE[el.id]=el.value;
-  });
-}
-
-// ── OVERVIEW ──
-function ovR(){
-  var month=getMS('ov_month'),project=getMS('ov_proj'),data=flt(month,project);
-  var totT=sum(data,'target'),totA=sum(data,'actual'),py=pyFor(month,project),achP=pct(totA,totT);
-  var meoTotA=D.meo.reduce(function(s,m){return s+m.actual;},0);
-  var dA=sum(flt(month,project,'Direct'),'actual');
-  document.getElementById('page-overview').innerHTML=
-    '<div class="fbar"><label>Month</label>'+buildMS('ov_month','month','ovR')+
-    '<label>Project</label>'+buildMS('ov_proj','project','ovR')+'</div>'+
-    '<div class="krow">'+
-      kpi('FY27 Target',cr(totT)+'Cr','Total target','var(--amber)')+
-      kpi('FY27 Actual',cr(totA)+'Cr',achP+'% achieved',achP>=80?'var(--green)':achP>=50?'var(--amber)':'var(--red)')+
-      kpi('FY26 Actual PY',cr(py)+'Cr','Last year','var(--purple)')+
-      kpi('Shortfall',cr(Math.max(totT-totA,0))+'Cr',totA>=totT?'✓ Met':'Remaining',totA>=totT?'var(--green)':'var(--red)')+
-      kpi('MEO Pipeline',cr(meoTotA)+'Cr','All projects today','var(--cyan)')+
-      kpi('Direct %',pct(dA,totA||1)+'%','of actual sales','var(--blue)')+
-    '</div>'+
-    '<div class="g2">'+
-      '<div class="card gf"><div class="st"><div class="stbar"></div>Monthly — Target vs Actual vs PY (₹Cr)</div>'+
-      monthBarChart(project)+
-      '<div style="display:flex;gap:12px;margin-top:8px;font-size:11px">'+
-        '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px"></span>Target</span>'+
-        '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>Actual</span>'+
-        '<span><span style="display:inline-block;width:10px;height:10px;background:#4b5563;border-radius:2px;margin-right:4px"></span>PY</span></div></div>'+
-      '<div class="card gf"><div class="st"><div class="stbar"></div>Project Flag Status</div>'+
-        '<div style="max-height:320px;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch">'+
-        D.projects.map(function(p){
-          var pd=flt(month,p),t=sum(pd,'target'),a=sum(pd,'actual'),p2=pct(a,t);
-          return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);min-width:360px">'+
-            '<span style="min-width:110px;font-weight:600;font-size:12px">'+p+'</span>'+
-            '<div style="flex:1;min-width:80px">'+pb(p2)+'</div>'+
-            '<span style="min-width:65px;text-align:right">'+flag(p2)+'</span>'+
-            '<span style="min-width:80px;text-align:right;font-size:11px;color:var(--muted)">'+cr(a)+'/'+cr(t)+'</span></div>';
-        }).join('')+'</div></div></div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Achievement Heatmap</div>'+
-    '<div style="overflow-x:auto"><div style="display:table;width:100%;min-width:100%">'+
-    '<div style="display:flex;gap:4px;margin-bottom:5px;align-items:center;width:100%">'+
-    '<div style="min-width:110px"></div>'+
-    D.months.map(function(m){return '<div class="hcell" style="color:var(--muted);font-size:10px;font-weight:400">'+m.slice(0,3)+'</div>';}).join('')+
-    '<div class="hcell" style="min-width:52px;color:var(--muted);font-size:10px">Total</div></div>'+
-    D.projects.map(function(p){
-      var cells=D.months.map(function(m){
-        var d=flt(m,p),t=sum(d,'target'),a=sum(d,'actual');
-        if(!t&&!a)return '<div class="hcell" style="background:#0f1e33;color:var(--muted)">—</div>';
-        var p2=pct(a,t),bg=p2>=80?'#10b98128':p2>=50?'#f59e0b28':'#ef444428',fc=p2>=80?'var(--green)':p2>=50?'var(--amber)':'var(--red)';
-        return '<div class="hcell" style="background:'+bg+';color:'+fc+'" title="'+m+': T='+t.toFixed(1)+' A='+a.toFixed(1)+'">'+p2+'%</div>';
-      }).join('');
-      var td=flt('all',p),tt=sum(td,'target'),ta=sum(td,'actual'),tp=pct(ta,tt);
-      var tbg=tp>=80?'#10b98138':tp>=50?'#f59e0b38':'#ef444438',tfc=tp>=80?'var(--green)':tp>=50?'var(--amber)':'var(--red)';
-      return '<div style="display:flex;gap:4px;align-items:center;margin-bottom:4px;width:100%">'+
-        '<div style="min-width:110px;font-size:12px;font-weight:600">'+p+'</div>'+cells+
-        '<div class="hcell" style="min-width:52px;background:'+tbg+';color:'+tfc+';font-weight:700">'+tp+'%</div></div>';
-    }).join('')+'</div></div></div>';
-  buildFilters();
-}
-
-function monthBarChart(project){
-  var vals=D.months.map(function(m){return{m:m,t:sum(flt(m,project||'all'),'target'),a:sum(flt(m,project||'all'),'actual'),py:pyFor(m,project||'all')};});
-  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.t,v.a,v.py);}));
-  if(maxV<=0)maxV=1;
-  var H=160;
-  return '<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px"><div style="display:flex;align-items:flex-end;gap:3px;min-width:max-content;height:'+(H+30)+'px">'+vals.map(function(v){
-    var ht=Math.max(v.t>0?Math.round(v.t/maxV*H):0,2),ha=Math.max(v.a>0?Math.round(v.a/maxV*H):0,2),hp=Math.max(v.py>0?Math.round(v.py/maxV*H):0,2);
-    var tLabel=v.t>0?v.t.toFixed(1):'';
-    var aLabel=v.a>0?v.a.toFixed(1):'';
-    var pyLabel=v.py>0?v.py.toFixed(1):'';
-    return '<div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;min-width:54px">'+
-      '<div style="display:flex;align-items:flex-end;gap:2px;height:'+H+'px;position:relative">'+
-      (v.t>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-        '<div style="font-size:8.5px;color:var(--amber);font-weight:700;margin-bottom:2px;white-space:nowrap">'+tLabel+'</div>'+
-        '<div style="height:'+ht+'px;width:14px;background:var(--amber);opacity:.85;border-radius:3px 3px 0 0" title="'+v.m+' Target: '+v.t.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
-      (v.a>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-        '<div style="font-size:8.5px;color:var(--blue);font-weight:700;margin-bottom:2px;white-space:nowrap">'+aLabel+'</div>'+
-        '<div style="height:'+ha+'px;width:14px;background:var(--blue);border-radius:3px 3px 0 0" title="'+v.m+' Actual: '+v.a.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
-      (v.py>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-        '<div style="font-size:8.5px;color:#9ca3af;font-weight:700;margin-bottom:2px;white-space:nowrap">'+pyLabel+'</div>'+
-        '<div style="height:'+hp+'px;width:14px;background:#4b5563;border-radius:3px 3px 0 0" title="'+v.m+' PY: '+v.py.toFixed(2)+'Cr"></div></div>':'<div style="width:14px"></div>')+
-      '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
-  }).join('')+'</div></div>';
-}
-
-// ── PROJECTS ──
-function prR(){
-  var project=getMS('pr_proj'),month=getMS('pr_month');
-  var projs=project==='all'?D.projects:(Array.isArray(project)?project:[project]);
-  var pColors=['var(--amber)','var(--blue)','var(--green)','var(--purple)','var(--cyan)','var(--red)','#6366f1'];
-  document.getElementById('page-projects').innerHTML=
-    '<div class="fbar"><label>Project</label>'+buildMS('pr_proj','project','prR')+
-    '<label>Month</label>'+buildMS('pr_month','month','prR')+'</div>'+
-    projs.map(function(p,pi){
-      var months=month==='all'?D.months:(Array.isArray(month)?month:[month]);
-      var allD=flt(month,p),totT=sum(allD,'target'),totA=sum(allD,'actual'),totP=pct(totA,totT),pyTot=pyFor(month,p);
-      var rows=months.map(function(m){
-        var d=flt(m,p),t=sum(d,'target'),a=sum(d,'actual'),py=pyFor(m,p),p2=pct(a,t);
-        var bg=a>0?(p2>=80?'#10b98108':p2>=50?'#f59e0b08':'#ef444408'):'';
-        var grP=py>0?Math.round((a-py)/py*100):0;
-        return '<tr style="background:'+bg+'">'+
-          '<td class="tl">'+m+'</td>'+
-          '<td style="color:#8b5cf6">'+( py>0?cr(py)+'Cr':'—')+'</td>'+
-          '<td style="color:var(--amber);font-weight:600">'+(t>0?cr(t)+'Cr':'—')+'</td>'+
-          '<td style="color:var(--blue)">'+(a>0?cr(a)+'Cr':'—')+'</td>'+
-          '<td>'+(t>0?flag(p2):'—')+'</td>'+
-          '<td style="color:var(--red)">'+(t>0&&a<t&&a>0?cr(t-a)+'Cr':(a>=t&&t>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td>'+
-          '<td>'+(py>0&&a>0?'<span style="color:'+(a>=py?'var(--green)':'var(--red)')+'">vs PY '+(a>=py?'▲':'▼')+Math.abs(grP)+'%</span>':'—')+'</td>'+
-          '</tr>';
-      }).join('');
-      return '<div class="card gf" style="border-top:2px solid '+pColors[pi%pColors.length]+'">'+
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">'+
-        '<div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:800">'+p+'</div>'+
-        '<div style="font-size:11px;color:var(--muted)">FY26 Actual (PY): '+cr(pyTot)+'Cr</div></div>'+
-        '<div style="margin-left:auto;display:flex;gap:8px">'+kpi('FY27 Target',cr(totT)+'Cr','','var(--amber)')+kpi('FY27 Actual',cr(totA)+'Cr',totP+'%',totP>=80?'var(--green)':totP>=50?'var(--amber)':'var(--red)')+'</div></div>'+
-        '<div class="tw"><table>'+
-        '<thead><tr><th>Month</th><th>FY26 PY Actual</th><th>FY27 Target</th><th>FY27 Actual</th><th>% Ach</th><th>Shortfall</th><th>vs PY</th></tr></thead>'+
-        '<tbody>'+rows+'</tbody>'+
-        '<tfoot><tr><td class="tl">TOTAL</td><td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td><td style="color:var(--amber)">'+cr(totT)+'Cr</td><td style="color:var(--blue)">'+cr(totA)+'Cr</td><td>'+flag(totP)+'</td><td style="color:var(--red)">'+(totT>totA?cr(totT-totA)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td><td></td></tr></tfoot>'+
-        '</table></div></div>';
-    }).join('');
-  buildFilters();
-}
-
-// ── STM ──
-function stmR(){
-  var project=getMS('stm_proj'),month=getMS('stm_month'),type=sel('stm_type'),data=flt(month,project,type);
-  var bySTM=Object.entries(groupBy(data,'stm')).map(function(e){return{stm:e[0],type:e[1][0].type,t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
-  var maxV=Math.max.apply(null,bySTM.map(function(s){return Math.max(s.t,s.a);}));if(maxV<=0)maxV=1;
-  var totT=sum(data,'target'),totA=sum(data,'actual');
-  var tableRows=Object.entries(groupBy(flt(month,project,type),'stm')).filter(function(e){return e[1].some(function(r){return r.target>0||r.actual>0;});}).map(function(e){
-    var stm=e[0],rows=e[1],t=sum(rows,'target'),a=sum(rows,'actual'),p2=pct(a,t),stype=rows[0].type;
-    var projs=[...new Set(rows.map(function(r){return r.project;}))].join(', ');
-    var bg=a>0?(p2>=80?'#10b98108':p2>=50?'#f59e0b08':'#ef444408'):'';
-    return '<tr style="background:'+bg+'">'+
-      '<td class="tl">'+stm+'</td><td style="font-size:11px;color:var(--muted)">'+projs+'</td>'+
-      '<td><span style="color:'+(stype==='CP'?'var(--blue)':'var(--green)')+';font-size:11px;font-weight:600">'+stype+'</span></td>'+
-      '<td style="color:var(--amber)">'+cr(t)+'Cr</td><td style="color:var(--blue)">'+cr(a)+'Cr</td>'+
-      '<td>'+flag(p2)+'</td>'+
-      '<td style="color:var(--red)">'+(t>a?cr(t-a)+'Cr':(a>=t&&t>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td></tr>';
-  }).join('');
-  document.getElementById('page-stm').innerHTML=
-    '<div class="fbar"><label>Project</label>'+buildMS('stm_proj','project','stmR')+
-    '<label>Month</label>'+buildMS('stm_month','month','stmR')+
-    '<label>Type</label><select id="stm_type" onchange="stmR()"><option value="all">All</option><option value="Direct">Direct</option><option value="CP">CP</option></select></div>'+
-    '<div class="g2 gf">'+
-    '<div class="card"><div class="st"><div class="stbar"></div>STM Performance</div>'+
-    (bySTM.length?bySTM.map(function(s){
-      var p2=pct(s.a,s.t),tc=s.type==='CP'?'var(--blue)':'var(--green)';
-      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">'+
-        '<div style="min-width:85px"><div style="font-weight:600;font-size:12px">'+s.stm+'</div><div style="font-size:10px;color:'+tc+'">'+s.type+'</div></div>'+
-        '<div style="flex:1">'+pb(p2)+'</div>'+
-        '<div style="min-width:90px;text-align:right;font-size:11px"><div style="color:var(--amber)">T: '+cr(s.t)+'</div><div style="color:var(--blue)">A: '+cr(s.a)+'</div></div>'+
-        flag(p2)+'</div>';
-    }).join(''):'<div style="color:var(--muted);padding:20px;text-align:center">No data for selected filters</div>')+
-    '</div>'+
-    '<div class="card"><div class="st"><div class="stbar"></div>Target vs Actual Bars</div>'+
-    '<div class="chart-scroll"><div class="barchart">'+
-    (bySTM.length?bySTM.map(function(s){
-      var ht=Math.round(s.t/maxV*90),ha=Math.round(s.a/maxV*90);
-      return '<div class="bgroup" style="min-width:50px"><div class="bpair">'+
-        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--amber)">'+cr(s.t)+'Cr</div>'+
-          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7" title="'+s.stm+' Target: '+s.t.toFixed(2)+'Cr"></div>'+ 
-        '</div>'+ 
-        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--blue)">'+cr(s.a)+'Cr</div>'+ 
-          '<div class="bar" style="height:'+ha+'px;background:var(--blue)" title="'+s.stm+' Actual: '+s.a.toFixed(2)+'Cr"></div>'+ 
-        '</div>'+ 
-        '</div><div class="blabel">'+s.stm.split(' ')[0]+'</div></div>';
-    }).join(''):'<div style="color:var(--muted);margin:auto">No data</div>')+
-    '</div></div></div></div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Full STM Table</div>'+
-    '<div class="tw"><table>'+
-    '<thead><tr><th>STM</th><th>Projects</th><th>Type</th><th>Target</th><th>Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
-    '<tbody>'+(tableRows||'<tr><td colspan="7" style="color:var(--muted);padding:20px">No data</td></tr>')+'</tbody>'+
-    '<tfoot><tr><td class="tl" colspan="3">TOTAL</td><td style="color:var(--amber)">'+cr(totT)+'Cr</td><td style="color:var(--blue)">'+cr(totA)+'Cr</td><td>'+flag(pct(totA,totT))+'</td><td style="color:var(--red)">'+(totT>totA?cr(totT-totA)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr></tfoot>'+
-    '</table></div></div>';
-  buildFilters();
-  var st=document.getElementById('stm_type');if(st&&type!=='all')st.value=type;
-}
-
-// ── MEO ──
-function meoR(){
-  var totT=D.meo.reduce(function(s,m){return s+m.target;},0);
-  var totA=D.meo.reduce(function(s,m){return s+m.actual;},0);
-  var totMeo=D.meo.reduce(function(s,m){return s+m.expected;},0);
-  var totSF=D.meo.reduce(function(s,m){return s+(m.actual+m.expected);},0);
-  var totAchBef=pct(totA,totT);
-  var totAchAft=pct(totSF,totT);
-
-  // Build table rows matching Excel: Project | Apr Tgt | Apr Act | % Bef | MEO Today | SF/Excess | % After
-  var rows=D.meo.map(function(m){
-    var achBef=pct(m.actual,m.target);
-    var sfExcess=m.actual+m.expected;        // "As per MEO SF / excess"
-    var achAft=m.target>0?Math.round(sfExcess/m.target*100):0;
-    var bfCol=achBef>=80?'var(--green)':achBef>=50?'var(--amber)':'var(--red)';
-    var afCol=achAft>=80?'var(--green)':achAft>=50?'var(--cyan)':'var(--amber)';
-
-    return '<tr>'+
-      '<td class="tl" style="font-weight:700">'+m.project+'</td>'+
-      '<td style="color:var(--amber);font-weight:600">'+m.target.toFixed(1)+'</td>'+
-      '<td style="color:var(--blue)">'+(m.actual>0?m.actual.toFixed(1):'—')+'</td>'+
-      '<td>'+
-        '<div style="display:flex;align-items:center;gap:6px">'+
-          '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
-            '<div style="height:100%;width:'+Math.min(achBef,100)+'%;background:'+bfCol+';border-radius:20px"></div>'+
-          '</div>'+
-          '<span style="color:'+bfCol+';font-weight:700;min-width:34px">'+achBef+'%</span>'+
-        '</div>'+
-      '</td>'+
-      '<td style="color:var(--cyan);font-weight:600">'+(m.expected>0?m.expected.toFixed(1):'—')+'</td>'+
-      '<td style="color:var(--purple);font-weight:600">'+sfExcess.toFixed(1)+'</td>'+
-      '<td>'+
-        '<div style="display:flex;align-items:center;gap:6px">'+
-          '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
-            '<div style="height:100%;width:'+Math.min(achAft,100)+'%;background:'+afCol+';border-radius:20px"></div>'+
-          '</div>'+
-          '<span style="color:'+afCol+';font-weight:700;min-width:38px">'+achAft+'%</span>'+
-        '</div>'+
-      '</td>'+
-    '</tr>';
-  }).join('');
-
-  // Total row
-  var bfColT=totAchBef>=80?'var(--green)':totAchBef>=50?'var(--amber)':'var(--red)';
-  var afColT=totAchAft>=80?'var(--green)':totAchAft>=50?'var(--cyan)':'var(--amber)';
-  var totalRow='<tr style="background:var(--surface);font-weight:700">'+
-    '<td class="tl" style="font-size:13px">TOTAL</td>'+
-    '<td style="color:var(--amber)">'+totT.toFixed(1)+'</td>'+
-    '<td style="color:var(--blue)">'+totA.toFixed(1)+'</td>'+
-    '<td>'+
-      '<div style="display:flex;align-items:center;gap:6px">'+
-        '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
-          '<div style="height:100%;width:'+Math.min(totAchBef,100)+'%;background:'+bfColT+';border-radius:20px"></div>'+
-        '</div>'+
-        '<span style="color:'+bfColT+';font-weight:800;min-width:34px">'+totAchBef+'%</span>'+
-      '</div>'+
-    '</td>'+
-    '<td style="color:var(--cyan)">'+totMeo.toFixed(1)+'</td>'+
-    '<td style="color:var(--purple)">'+totSF.toFixed(1)+'</td>'+
-    '<td>'+
-      '<div style="display:flex;align-items:center;gap:6px">'+
-        '<div style="flex:1;background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;min-width:60px">'+
-          '<div style="height:100%;width:'+Math.min(totAchAft,100)+'%;background:'+afColT+';border-radius:20px"></div>'+
-        '</div>'+
-        '<span style="color:'+afColT+';font-weight:800;min-width:38px">'+totAchAft+'%</span>'+
-      '</div>'+
-    '</td>'+
-  '</tr>';
-
-  document.getElementById('page-meo').innerHTML=
-    '<div class="krow">'+
-    kpi('May Target',totT.toFixed(1)+'Cr','All projects','var(--amber)')+
-    kpi('May Actual',totA.toFixed(1)+'Cr',totAchBef+'% before MEO','var(--blue)')+
-    kpi('MEO as on Today',totMeo.toFixed(1)+'Cr','Pipeline','var(--cyan)')+
-    kpi('SF / Excess Total',totSF.toFixed(1)+'Cr','Actual + MEO','var(--purple)')+
-    kpi('% Ach After MEO',totAchAft+'%','With pipeline',totAchAft>=80?'var(--green)':totAchAft>=50?'var(--cyan)':'var(--amber)')+
-    '</div>'+
-    '<div class="card gf">'+
-    '<div class="st"><div class="stbar"></div>MEO AS ON TODAY</div>'+
-    '<div class="tw"><table>'+
-    '<thead>'+
-      '<tr style="background:#0d1b2e">'+
-        '<th style="text-align:left">Project</th>'+
-        '<th>May Target</th>'+
-        '<th>May Actual</th>'+
-        '<th>% Achievement Before</th>'+
-        '<th>MEO as on Today</th>'+
-        '<th>As per MEO SF / Excess</th>'+
-        '<th>% Achievement After</th>'+
-      '</tr>'+
-    '</thead>'+
-    '<tbody>'+rows+totalRow+'</tbody>'+
-    '</table></div></div>';
-}
-
-// ── DIRECT vs CP ──
-function scR(){
-  var month=getMS('sc_month'),project=getMS('sc_proj');
-  var direct=flt(month,project,'Direct'),cp=flt(month,project,'CP'),all=flt(month,project);
-  var dT=sum(direct,'target'),dA=sum(direct,'actual'),cT=sum(cp,'target'),cA=sum(cp,'actual'),tT=sum(all,'target'),tA=sum(all,'actual');
-  var dSTM=Object.entries(groupBy(direct,'stm')).map(function(e){return{stm:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;}).sort(function(a,b){return b.a-a.a;});
-  var cProj=Object.entries(groupBy(cp,'project')).map(function(e){return{proj:e[0],t:sum(e[1],'target'),a:sum(e[1],'actual')};}).filter(function(s){return s.t>0||s.a>0;});
-  document.getElementById('page-saletype').innerHTML=
-    '<div class="fbar"><label>Month</label>'+buildMS('sc_month','month','scR')+
-    '<label>Project</label>'+buildMS('sc_proj','project','scR')+'</div>'+
-    '<div class="krow">'+
-    kpi('Direct Target',cr(dT)+'Cr',pct(dT,tT)+'% of total','var(--green)')+
-    kpi('Direct Actual',cr(dA)+'Cr',pct(dA,dT)+'% achieved','var(--green)')+
-    kpi('CP Target',cr(cT)+'Cr',pct(cT,tT)+'% of total','var(--blue)')+
-    kpi('CP Actual',cr(cA)+'Cr',pct(cA,cT)+'% achieved','var(--blue)')+
-    kpi('Direct % of Act',pct(dA,tA||1)+'%','vs CP '+pct(cA,tA||1)+'%','var(--cyan)')+
-    '</div>'+
-    '<div class="g2">'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Direct Sales — STM Wise</div>'+
-    '<div class="tw"><table><thead><tr><th>STM</th><th>Target</th><th>Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
-    '<tbody>'+dSTM.map(function(s){var p2=pct(s.a,s.t);return '<tr><td class="tl">'+s.stm+'</td><td style="color:var(--amber)">'+cr(s.t)+'Cr</td><td style="color:var(--green)">'+cr(s.a)+'Cr</td><td>'+flag(p2)+'</td><td style="color:var(--red)">'+(s.t>s.a?cr(s.t-s.a)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr>';}).join('')+'</tbody>'+
-    '<tfoot><tr><td class="tl">Total</td><td style="color:var(--amber)">'+cr(dT)+'Cr</td><td style="color:var(--green)">'+cr(dA)+'Cr</td><td>'+flag(pct(dA,dT))+'</td><td>'+(dT>dA?cr(dT-dA)+'Cr':'✓')+'</td></tr></tfoot>'+
-    '</table></div></div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>CP Sales — Kunal</div>'+
-    '<div class="tw"><table><thead><tr><th>Project</th><th>CP Target</th><th>CP Actual</th><th>% Ach</th><th>Shortfall</th></tr></thead>'+
-    '<tbody>'+cProj.map(function(s){var p2=pct(s.a,s.t);return '<tr><td class="tl">'+s.proj+'</td><td style="color:var(--amber)">'+cr(s.t)+'Cr</td><td style="color:var(--blue)">'+cr(s.a)+'Cr</td><td>'+flag(p2)+'</td><td style="color:var(--red)">'+(s.t>s.a?cr(s.t-s.a)+'Cr':'<span style="color:var(--green)">✓</span>')+'</td></tr>';}).join('')+'</tbody>'+
-    '<tfoot><tr><td class="tl">Total</td><td style="color:var(--amber)">'+cr(cT)+'Cr</td><td style="color:var(--blue)">'+cr(cA)+'Cr</td><td>'+flag(pct(cA,cT))+'</td><td>'+(cT>cA?cr(cT-cA)+'Cr':'✓')+'</td></tr></tfoot>'+
-    '</table></div></div></div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Direct vs CP Split — Project Wise</div>'+
-    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:6px">'+
-    D.projects.map(function(p){
-      var pd=flt(month,p,'Direct'),pc=flt(month,p,'CP');
-      var dTp=sum(pd,'target'),dAp=sum(pd,'actual'),cTp=sum(pc,'target'),cAp=sum(pc,'actual');
-      if(!dTp&&!cTp&&!dAp&&!cAp)return '';
-      var totAp=dAp+cAp,dp=totAp>0?Math.round(dAp/totAp*100):0;
-      return '<div class="card" style="background:var(--card2)">'+
-        '<div style="font-family:Syne,sans-serif;font-weight:700;font-size:14px;margin-bottom:9px">'+p+'</div>'+
-        '<div style="display:flex;gap:8px;margin-bottom:8px">'+
-        '<div style="flex:1;text-align:center;background:#10b98112;border-radius:6px;padding:5px"><div style="font-size:10px;color:var(--muted)">Direct</div><div style="font-weight:700;color:var(--green)">'+cr(dAp)+'Cr</div><div style="font-size:10px;color:var(--muted)">of '+cr(dTp)+'</div></div>'+
-        '<div style="flex:1;text-align:center;background:#3b82f612;border-radius:6px;padding:5px"><div style="font-size:10px;color:var(--muted)">CP</div><div style="font-weight:700;color:var(--blue)">'+cr(cAp)+'Cr</div><div style="font-size:10px;color:var(--muted)">of '+cr(cTp)+'</div></div>'+
-        '</div>'+
-        '<div style="height:9px;border-radius:5px;overflow:hidden;display:flex"><div style="width:'+dp+'%;background:var(--green)"></div><div style="flex:1;background:var(--blue)"></div></div>'+
-        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px"><span>Direct '+dp+'%</span><span>CP '+(100-dp)+'%</span></div></div>';
-    }).filter(Boolean).join('')+'</div></div>';
-  buildFilters();
-}
-
-// ── MARKETING ──
-function mktR(){
-  var month=getMS('mk_month'),project=getMS('mk_proj'),data=mktFlt(month,project);
-  var mqlT=data.reduce(function(s,r){return s+r.mqlT;},0),mqlA=data.reduce(function(s,r){return s+r.mqlA;},0);
-  var sqlT=data.reduce(function(s,r){return s+r.sqlT;},0),sqlA=data.reduce(function(s,r){return s+r.sqlA;},0);
-  var svT=data.reduce(function(s,r){return s+r.svT;},0),svA=data.reduce(function(s,r){return s+r.svA;},0);
-  var steps=[{l:'MQL (Leads)',t:mqlT,a:mqlA,c:'var(--blue)'},{l:'SQL (Qualified)',t:sqlT,a:sqlA,c:'var(--amber)'},{l:'Site Visits',t:svT,a:svA,c:'var(--green)'}];
-  var maxF=Math.max.apply(null,steps.map(function(s){return Math.max(s.t,s.a);}));if(maxF<=0)maxF=1;
-  var projMQL=D.projects.map(function(p){var pd=mktFlt(month,p);return{proj:p,t:pd.reduce(function(s,r){return s+r.mqlT;},0),a:pd.reduce(function(s,r){return s+r.mqlA;},0)};}).filter(function(d){return d.t>0||d.a>0;});
-  var maxPM=Math.max.apply(null,projMQL.map(function(d){return Math.max(d.t,d.a);}));if(maxPM<=0)maxPM=1;
-  document.getElementById('page-marketing').innerHTML=
-    '<div class="fbar"><label>Month</label>'+buildMS('mk_month','month','mktR')+
-    '<label>Project</label>'+buildMS('mk_proj','project','mktR')+'</div>'+
-    '<div class="krow">'+
-    kpi('MQL Target',mqlT.toLocaleString(),'Leads planned','var(--amber)')+
-    kpi('MQL Actual',mqlA.toLocaleString(),pct(mqlA,mqlT)+'% of target','var(--blue)')+
-    kpi('SQL Actual',sqlA.toLocaleString(),pct(sqlA,sqlT)+'% of target','var(--green)')+
-    kpi('Site Visits Act',svA.toLocaleString(),pct(svA,svT)+'% of target','var(--cyan)')+
-    kpi('MQL→SQL Rate',mqlA>0?pct(sqlA,mqlA)+'%':'—','Conversion','var(--purple)')+
-    '</div>'+
-    '<div class="g2">'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Marketing Funnel</div>'+
-    steps.map(function(s){
-      var tW=Math.round(s.t/maxF*100),aW=Math.round(s.a/maxF*100),p2=pct(s.a,s.t);
-      return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">'+
-        '<div style="min-width:110px;font-size:12px;font-weight:500">'+s.l+'</div>'+
-        '<div style="flex:1;position:relative;height:16px;background:var(--border);border-radius:8px;overflow:hidden">'+
-        '<div style="position:absolute;height:100%;width:'+tW+'%;background:'+s.c+';opacity:.25;border-radius:8px"></div>'+
-        '<div style="position:absolute;height:100%;width:'+aW+'%;background:'+s.c+';border-radius:8px"></div></div>'+
-        '<div style="min-width:120px;text-align:right;font-size:11px"><span style="color:'+s.c+';font-weight:600">'+s.a.toLocaleString()+'</span>'+
-        '<span style="color:var(--muted)"> / '+s.t.toLocaleString()+'</span> &nbsp;'+flag(p2)+'</div></div>';
-    }).join('')+'</div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>MQL by Project</div>'+
-    '<div class="barchart" style="height:180px">'+
-    (projMQL.length?projMQL.map(function(d){
-      var H2=140;
-      var ht=Math.max(d.t>0?Math.round(d.t/maxPM*H2):0,2),ha=Math.max(d.a>0?Math.round(d.a/maxPM*H2):0,2),p2=pct(d.a,d.t);
-      var aColor=p2>=100?'var(--green)':p2>=50?'var(--blue)':'var(--red)';
-      return '<div class="bgroup" style="align-items:center">'+
-        '<div class="bpair" style="height:'+H2+'px;align-items:flex-end;gap:4px">'+
-          (d.t>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-            '<div style="font-size:9px;color:var(--amber);font-weight:700;margin-bottom:2px">'+d.t+'</div>'+
-            '<div style="height:'+ht+'px;width:18px;background:var(--amber);opacity:.8;border-radius:4px 4px 0 0"></div>'+
-          '</div>':'<div style="width:18px"></div>')+
-          (d.a>0?'<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-            '<div style="font-size:9px;color:'+aColor+';font-weight:700;margin-bottom:2px">'+d.a+'</div>'+
-            '<div style="height:'+ha+'px;width:18px;background:'+aColor+';border-radius:4px 4px 0 0"></div>'+
-          '</div>':'<div style="width:18px"></div>')+
-        '</div>'+
-        '<div class="blabel">'+d.proj.split(' ')[0]+'<br/><span style="color:'+aColor+';font-weight:700">'+p2+'%</span></div>'+
-      '</div>';
-    }).join(''):'<div style="color:var(--muted);margin:auto">No data</div>')+
-    '</div></div></div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Full Marketing Table</div>'+
-    '<div class="tw"><table>'+
-    '<thead><tr><th>Month</th><th>Project</th><th>MQL Tgt</th><th>MQL Act</th><th>MQL%</th><th>SQL Tgt</th><th>SQL Act</th><th>SQL%</th><th>SV Tgt</th><th>SV Act</th><th>SV%</th></tr></thead>'+
-    '<tbody>'+data.filter(function(r){return r.mqlT||r.mqlA||r.sqlT||r.svT;}).map(function(r){
-      return '<tr><td class="tl">'+r.month+'</td><td class="tl">'+r.project+'</td>'+
-        '<td style="color:var(--amber)">'+(r.mqlT||'—')+'</td><td style="color:var(--blue)">'+(r.mqlA||'—')+'</td><td>'+(r.mqlT?flag(pct(r.mqlA,r.mqlT)):'—')+'</td>'+
-        '<td style="color:var(--amber)">'+(r.sqlT||'—')+'</td><td style="color:var(--blue)">'+(r.sqlA||'—')+'</td><td>'+(r.sqlT?flag(pct(r.sqlA,r.sqlT)):'—')+'</td>'+
-        '<td style="color:var(--amber)">'+(r.svT||'—')+'</td><td style="color:var(--blue)">'+(r.svA||'—')+'</td><td>'+(r.svT?flag(pct(r.svA,r.svT)):'—')+'</td></tr>';
-    }).join('')+'</tbody></table></div></div>';
-  buildFilters();
-}
-
-// ── YoY ──
-function yoyR(){
-  var project=getMS('yy_proj');
-  var fyTot=sum(flt('all',project),'target');
-  var fyActTot=sum(flt('all',project),'actual');
-  var pyTot=pyFor('all',project);
-
-  // ✅ FIXED: actual this year vs actual last year
-  var growth=pyTot>0?Math.round((fyActTot-pyTot)/pyTot*100):0;
-
-  var vals=MONTH_ORDER.map(function(m){
-    return{m:m,py:pyFor(m,project),tgt:sum(flt(m,project),'target'),act:sum(flt(m,project),'actual')};
-  });
-  var maxV=Math.max.apply(null,vals.map(function(v){return Math.max(v.py,v.tgt,v.act);}));
-  if(maxV<=0)maxV=1;
-
-  document.getElementById('page-yoy').innerHTML=
-    '<div class="fbar"><label>Project</label>'+buildMS('yy_proj','project','yoyR')+'</div>'+
-    '<div class="krow">'+
-    kpi('FY25-26 Total (PY)',cr(pyTot)+'Cr','Last year actual','var(--purple)')+
-    kpi('FY26-27 Target',cr(fyTot)+'Cr','This year target','var(--amber)')+
-    kpi('FY26-27 Actual MTD',cr(fyActTot)+'Cr',pct(fyActTot,fyTot)+'% of target','var(--blue)')+
-    kpi('Actual Growth vs PY',(growth>=0?'▲':'▼')+Math.abs(growth)+'%','FY27 actual vs FY26 actual',growth>=0?'var(--green)':'var(--red)')+
-    '</div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Month-wise: FY25-26 Actual vs FY26-27 Target vs FY26-27 Actual</div>'+
-    '<div class="tw"><table>'+
-    '<thead><tr>'+
-      '<th>Month</th>'+
-      '<th>FY25-26 Actual (PY)</th>'+
-      '<th>FY26-27 Target</th>'+
-      '<th>FY26-27 Actual</th>'+
-      '<th>% Achieved</th>'+
-      '<th>Actual Growth vs PY</th>'+
-      '<th>Shortfall</th>'+
-    '</tr></thead>'+
-    '<tbody>'+vals.map(function(v){
-      var achP=pct(v.act,v.tgt);
-      // ✅ FIXED: actual vs actual (not target vs PY)
-      var grP=v.py>0?Math.round((v.act-v.py)/v.py*100):0;
-      var bg=v.act>0?(achP>=80?'#10b98108':achP>=50?'#f59e0b08':'#ef444408'):'';
-      return '<tr style="background:'+bg+'">'+
-        '<td class="tl">'+v.m+'</td>'+
-        '<td style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</td>'+
-        '<td style="color:var(--amber);font-weight:600">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</td>'+
-        '<td style="color:var(--blue)">'+(v.act>0?cr(v.act)+'Cr':'—')+'</td>'+
-        '<td>'+(v.tgt>0&&v.act>0?flag(achP):(v.tgt>0?'<span style="color:var(--muted)">Pending</span>':'—'))+'</td>'+
-        // ✅ Only show when both actuals exist, else Pending
-        '<td>'+(v.py>0&&v.act>0?'<span style="color:'+(grP>=0?'var(--green)':'var(--red)')+'">'+
-          (grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':
-          (v.py>0?'<span style="color:var(--muted)">Pending</span>':'—'))+'</td>'+
-        '<td style="color:var(--red)">'+(v.tgt>0&&v.act>0&&v.act<v.tgt?cr(v.tgt-v.act)+'Cr':
-          (v.act>=v.tgt&&v.tgt>0?'<span style="color:var(--green)">✓</span>':'—'))+'</td>'+
-      '</tr>';
-    }).join('')+'</tbody>'+
-    '<tfoot><tr>'+
-      '<td class="tl">TOTAL</td>'+
-      '<td style="color:#8b5cf6">'+cr(pyTot)+'Cr</td>'+
-      '<td style="color:var(--amber)">'+cr(fyTot)+'Cr</td>'+
-      '<td style="color:var(--blue)">'+cr(fyActTot)+'Cr</td>'+
-      '<td>'+flag(pct(fyActTot,fyTot))+'</td>'+
-      '<td><span style="color:'+(growth>=0?'var(--green)':'var(--red)')+'">'+
-        (growth>=0?'▲':'▼')+Math.abs(growth)+'% actual vs PY</span></td>'+
-      '<td style="color:var(--red)">'+(fyTot>fyActTot?cr(fyTot-fyActTot)+'Cr':
-        '<span style="color:var(--green)">✓</span>')+'</td>'+
-    '</tr></tfoot>'+
-    '</table></div></div>'+
-    '<div class="card"><div class="st"><div class="stbar"></div>Visual Comparison</div>'+
-    '<div class="chart-scroll"><div class="barchart" style="height:130px">'+
-    vals.map(function(v){
-      var hp=Math.round(v.py/maxV*110),ht=Math.round(v.tgt/maxV*110),ha=Math.round(v.act/maxV*110);
-      var grP=v.py>0&&v.act>0?Math.round((v.act-v.py)/v.py*100):null;
-      return '<div class="bgroup" style="min-width:54px"><div class="bpair" style="height:115px">'+
-        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:#8b5cf6">'+(v.py>0?cr(v.py)+'Cr':'—')+'</div>'+
-          '<div class="bar" style="height:'+hp+'px;background:#8b5cf6;opacity:.6"></div>'+
-        '</div>'+
-        '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-          '<div class="bar-label" style="color:var(--amber)">'+(v.tgt>0?cr(v.tgt)+'Cr':'—')+'</div>'+
-          '<div class="bar" style="height:'+ht+'px;background:var(--amber);opacity:.7"></div>'+
-        '</div>'+
-        (v.act>0?
-          '<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">'+
-            '<div class="bar-label" style="color:var(--blue)">'+cr(v.act)+'Cr'+
-              (grP!==null?' <span style="font-size:8px;color:'+(grP>=0?'var(--green)':'var(--red)')+';">'+(grP>=0?'▲':'▼')+Math.abs(grP)+'%</span>':'')+
-            '</div>'+
-            '<div class="bar" style="height:'+ha+'px;background:var(--blue)"></div>'+
-          '</div>'
-        :'<div style="width:16px"></div>')+
-      '</div><div class="blabel">'+v.m.slice(0,3)+'</div></div>';
-    }).join('')+
-    '</div></div>'+
-    '<div style="display:flex;gap:14px;margin-top:10px;font-size:11px">'+
-    '<span><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:4px;opacity:.6"></span>FY25-26 Actual</span>'+
-    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--amber);border-radius:2px;margin-right:4px;opacity:.7"></span>FY26-27 Target</span>'+
-    '<span><span style="display:inline-block;width:10px;height:10px;background:var(--blue);border-radius:2px;margin-right:4px"></span>FY26-27 Actual (▲▼ vs PY)</span>'+
-    '</div></div>';
-  buildFilters();
-}
-
-// ── INVENTORY ──
-function invR(){
-  if(!D||!D.inventory||!D.inventory.length){
-    document.getElementById('page-inventory').innerHTML='<div class="ebox"><h3>No Inventory Data</h3><p>Please fill in the Inventory sheet in your Excel file (Project Name, Total_units, Units_sold, Units_Available, Potential)</p></div>';
-    return;
-  }
-  var inv=D.inventory;
-  var totUnits=inv.reduce(function(s,r){return s+r.total;},0);
-  var totSold=inv.reduce(function(s,r){return s+r.sold;},0);
-  var totAvail=inv.reduce(function(s,r){return s+r.available;},0);
-  var totPotential=inv.reduce(function(s,r){return s+r.potential;},0);
-  var soldPct=pct(totSold,totUnits);
-
-  document.getElementById('page-inventory').innerHTML=
-    '<div class="krow">'+
-    kpi('Total Units',totUnits,'All projects','var(--blue)')+
-    kpi('Units Sold',totSold,soldPct+'% of total',soldPct>=70?'var(--green)':soldPct>=40?'var(--amber)':'var(--red)')+
-    kpi('Units Available',totAvail,'Ready to sell','var(--cyan)')+
-    kpi('Potential',totPotential>0?totPotential:'—',totPotential>0?'Pipeline units':'Not filled','var(--purple)')+
-    kpi('Sold %',soldPct+'%','Overall','var(--green)')+
-    '</div>'+
-    '<div class="card gf"><div class="st"><div class="stbar"></div>Inventory Status — Project Wise</div>'+
-    '<div class="tw"><table>'+
-    '<thead><tr><th>Project</th><th>Total Units</th><th>Units Sold</th><th>Units Available</th><th>Potential</th><th>% Sold</th><th>Progress</th><th>Status</th></tr></thead>'+
-    '<tbody>'+inv.map(function(r){
-      var sp=r.total>0?pct(r.sold,r.total):0;
-      var ap=r.total>0?pct(r.available,r.total):0;
-      var statusLabel=r.total===0
-        ?'<span class="flag" style="background:#1e335580;color:var(--muted);border:1px solid var(--border)">No Data</span>'
-        :sp>=80?'<span class="flag gr">Sold Out</span>'
-        :sp>=50?'<span class="flag yw">Low Stock</span>'
-        :'<span class="flag rd">Available</span>';
-      var barColor=sp>=80?'var(--green)':sp>=50?'var(--amber)':'var(--red)';
-      return '<tr>'+
-        '<td class="tl">'+r.project+'</td>'+
-        '<td style="font-weight:600">'+r.total+'</td>'+
-        '<td style="color:var(--green);font-weight:600">'+r.sold+'</td>'+
-        '<td style="color:var(--cyan);font-weight:600">'+r.available+'</td>'+
-        '<td style="color:var(--purple)">'+(r.potential>0?r.potential:'—')+'</td>'+
-        '<td>'+flag(sp,sp+'%')+'</td>'+
-        '<td style="min-width:140px">'+
-          '<div style="background:#0f1e33;border-radius:20px;height:8px;overflow:hidden;margin-bottom:2px">'+
-            '<div style="height:100%;width:'+Math.min(sp,100)+'%;background:'+barColor+';border-radius:20px"></div>'+
-          '</div>'+
-          '<div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted)">'+
-            '<span style="color:var(--green)">Sold: '+sp+'%</span>'+
-            '<span style="color:var(--cyan)">Avail: '+ap+'%</span>'+
-          '</div>'+
-        '</td>'+
-        '<td>'+statusLabel+'</td>'+
-      '</tr>';
-    }).join('')+'</tbody>'+
-    '<tfoot><tr>'+
-      '<td class="tl">TOTAL</td>'+
-      '<td style="font-weight:700">'+totUnits+'</td>'+
-      '<td style="color:var(--green);font-weight:700">'+totSold+'</td>'+
-      '<td style="color:var(--cyan);font-weight:700">'+totAvail+'</td>'+
-      '<td style="color:var(--purple)">'+totPotential+'</td>'+
-      '<td>'+flag(soldPct,soldPct+'%')+'</td>'+
-      '<td></td><td></td>'+
-    '</tr></tfoot>'+
-    '</table></div></div>'+
-    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">'+
-    inv.map(function(r){
-      var sp=r.total>0?pct(r.sold,r.total):0,ap=r.total>0?pct(r.available,r.total):0;
-      var holdP=r.total>0?Math.max(0,100-sp-ap):0;
-      var borderC=r.total===0?'var(--border)':sp>=70?'var(--green)':sp>=40?'var(--amber)':'var(--red)';
-      return '<div class="card" style="border-top:2px solid '+borderC+';background:var(--card2)">'+
-        '<div style="font-family:Syne,sans-serif;font-size:15px;font-weight:800;margin-bottom:10px;color:var(--head)">'+r.project+'</div>'+
-        '<div style="display:flex;gap:8px;margin-bottom:10px">'+
-          '<div style="flex:1;text-align:center;background:#10b98112;border-radius:7px;padding:8px 4px">'+
-            '<div style="font-size:10px;color:var(--muted)">Sold</div>'+
-            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--green)">'+r.sold+'</div>'+
-          '</div>'+
-          '<div style="flex:1;text-align:center;background:#06b6d412;border-radius:7px;padding:8px 4px">'+
-            '<div style="font-size:10px;color:var(--muted)">Available</div>'+
-            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--cyan)">'+r.available+'</div>'+
-          '</div>'+
-          '<div style="flex:1;text-align:center;background:#3b82f612;border-radius:7px;padding:8px 4px">'+
-            '<div style="font-size:10px;color:var(--muted)">Total</div>'+
-            '<div style="font-family:Syne,sans-serif;font-size:20px;font-weight:700;color:var(--blue)">'+r.total+'</div>'+
-          '</div>'+
-        '</div>'+
-        '<div style="height:12px;border-radius:6px;overflow:hidden;display:flex;gap:1px">'+
-          '<div style="width:'+sp+'%;background:var(--green);border-radius:6px 0 0 6px" title="Sold '+sp+'%"></div>'+
-          '<div style="width:'+holdP+'%;background:var(--amber)" title="Other '+holdP+'%"></div>'+
-          '<div style="flex:1;background:#1e3355;border-radius:0 6px 6px 0" title="Available '+ap+'%"></div>'+
-        '</div>'+
-        '<div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px">'+
-          '<span style="color:var(--green)">■ Sold '+sp+'%</span>'+
-          '<span style="color:var(--cyan)">■ Avail '+ap+'%</span>'+
-        '</div>'+
-        (r.potential>0?'<div style="margin-top:8px;font-size:11px;color:var(--purple)">🎯 Potential: '+r.potential+' units</div>':'')+
-      '</div>';
-    }).join('')+'</div>';
-}
-
-// ── Boot ─────────────────────────────────────────────────
-document.getElementById('loginUser').focus();
-
-// ── Tab scroll indicator (mobile) ─────────────────────────────
-(function(){
-  var tabsRow  = document.getElementById('tabsRow');
-  var tabsFade = document.getElementById('tabsFade');
-  if (!tabsRow || !tabsFade) return;
-
-  function updateFade(){
-    var atEnd = tabsRow.scrollLeft + tabsRow.clientWidth >= tabsRow.scrollWidth - 5;
-    tabsFade.classList.toggle('hidden', atEnd);
-  }
-
-  tabsRow.addEventListener('scroll', updateFade, {passive:true});
-  // Check on load
-  setTimeout(updateFade, 300);
-
-  // Auto-scroll active tab into view when nav() is called
-  var _origNav = window.nav;
-  window.nav = function(name, el){
-    _origNav(name, el);
-    // Scroll the clicked tab into view smoothly
-    if (el && el.scrollIntoView){
-      el.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
-    }
-    setTimeout(updateFade, 400);
-  };
-})();
-document.addEventListener('click',function(e){
-  if(!e.target.closest('.ms-wrap')){
-    if(MS_OPEN){MS_OPEN=null;document.querySelectorAll('.ms-dd.open').forEach(function(d){d.classList.remove('open');});}
+    applyData(j);
+  } catch (e) {
+    err.textContent = e.message;
+    err.style.display = 'block';
+    document.getElementById('loginBox').classList.add('shake');
+    setTimeout(() => document.getElementById('loginBox').classList.remove('shake'), 400);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Enter';
   }
 });
+
+window.addEventListener('DOMContentLoaded', async () => {
+  const saved = sessionStorage.getItem('sm_pass');
+  if (!saved) return;
+  try {
+    const j = await fetchData(saved);
+    if (j.ok) {
+      PASSWORD = saved;
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      applyData(j);
+    }
+  } catch {}
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem('sm_pass');
+  location.reload();
+});
+
+document.getElementById('reloadBtn').addEventListener('click', async () => {
+  const status = document.getElementById('status');
+  status.innerHTML = '<span class="dot load"></span>Reloading…';
+  try {
+    const j = await fetchData(PASSWORD);
+    if (!j.ok) throw new Error(j.error || 'Failed');
+    applyData(j);
+  } catch (e) {
+    status.innerHTML = '<span class="dot err"></span>' + e.message;
+  }
+});
+
+document.getElementById('tabs').addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  tab.classList.add('on');
+  document.getElementById('page-' + tab.dataset.page).classList.add('on');
+});
+
+// ════════════════════════════════════════════════════
+// FETCH
+// ════════════════════════════════════════════════════
+async function fetchData(pass) {
+  const url = `${APPS_SCRIPT_URL}?pass=${encodeURIComponent(pass)}&t=${Date.now()}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('Network error: HTTP ' + r.status);
+  return await r.json();
+}
+
+function applyData(j) {
+  SALES = (j.sales || []).map(normSales);
+  MKTG  = (j.marketing || []).map(normMktg);
+  const t = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('status').innerHTML = '<span class="dot ok"></span>Synced ' + t;
+  initFilters();
+  renderAll();
+}
+
+function normSales(r) {
+  return {
+    weekNo:  Number(r['Week No']) || 0,
+    project: String(r['Project'] || '').trim(),
+    stm:     String(r['STM Name'] || '').trim(),
+    units:   Number(r['Units Booked']) || 0,
+    sales:   Number(r['Sales Booked']) || 0,
+    revenue: Number(r['Revenue Booked']) || 0,
+    hot:     Number(r['Hot Leads']) || 0,
+    type:    String(r['Row Type'] || '').trim()
+  };
+}
+function normMktg(r) {
+  return {
+    weekNo:  Number(r['Week No']) || 0,
+    project: String(r['Project'] || '').trim(),
+    mql:     Number(r['MQL']) || 0,
+    sql:     Number(r['SQL']) || 0,
+    sv:      Number(r['SV']) || 0,
+    warm:    Number(r['Warm Leads']) || 0,
+    cost:    Number(r['Cost Of Inquiry']) || 0
+  };
+}
+
+// "Inquiry" = MQL (top of marketing funnel). If you'd rather use SQL or SV, change the field below.
+const inquiryField = 'mql';
+
+// ════════════════════════════════════════════════════
+// FILTERS
+// ════════════════════════════════════════════════════
+function initFilters() {
+  const projects = [...new Set([...SALES.filter(s => s.type === 'PROJECT TOTAL'), ...MKTG].map(x => x.project).filter(Boolean))].sort();
+
+  ['f_inq_project','f_leads_project','f_units_project','f_rev_project','f_tr_project','f_fun_project']
+    .forEach(id => fillSelect(id, projects, 'All'));
+
+  ['f_inq_project','f_leads_project','f_units_project','f_rev_project','f_tr_project','f_fun_project','lbRange','lbSort']
+    .forEach(id => document.getElementById(id).addEventListener('change', renderAll));
+}
+function fillSelect(id, items, allLabel) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = '';
+  const o = document.createElement('option');
+  o.value = '__ALL__'; o.textContent = allLabel;
+  sel.appendChild(o);
+  items.forEach(i => {
+    const op = document.createElement('option');
+    op.value = i; op.textContent = i;
+    sel.appendChild(op);
+  });
+  if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+}
+
+// ════════════════════════════════════════════════════
+// AGGREGATION HELPERS
+// ════════════════════════════════════════════════════
+function getWeeks() {
+  return [...new Set([...SALES, ...MKTG].map(r => r.weekNo))].filter(w => w > 0).sort((a,b) => a-b);
+}
+function getCWPW() {
+  const w = getWeeks();
+  return { cw: w[w.length-1], pw: w[w.length-2] };
+}
+function sumSales(week, key, projectFilter) {
+  return SALES.filter(s => s.weekNo === week && s.type === 'PROJECT TOTAL'
+    && (projectFilter === '__ALL__' || s.project === projectFilter))
+    .reduce((a,b) => a + (Number(b[key]) || 0), 0);
+}
+function sumMktg(week, key, projectFilter) {
+  return MKTG.filter(m => m.weekNo === week
+    && (projectFilter === '__ALL__' || m.project === projectFilter))
+    .reduce((a,b) => a + (Number(b[key]) || 0), 0);
+}
+function cumSales(key, projectFilter) {
+  return SALES.filter(s => s.type === 'PROJECT TOTAL'
+    && (projectFilter === '__ALL__' || s.project === projectFilter))
+    .reduce((a,b) => a + (Number(b[key]) || 0), 0);
+}
+function cumMktg(key, projectFilter) {
+  return MKTG.filter(m => projectFilter === '__ALL__' || m.project === projectFilter)
+    .reduce((a,b) => a + (Number(b[key]) || 0), 0);
+}
+function getProjectsList() {
+  return [...new Set([...SALES.filter(s => s.type === 'PROJECT TOTAL'), ...MKTG].map(x => x.project).filter(Boolean))].sort();
+}
+function totalProjectsCount(projectFilter) {
+  if (projectFilter === '__ALL__') return getProjectsList().length;
+  return 1;
+}
+
+// ════════════════════════════════════════════════════
+// GROWTH KPI
+// ════════════════════════════════════════════════════
+function setGrowthKPI(valId, pctId, cw, pw, isMoney) {
+  const valEl = document.getElementById(valId);
+  const pctEl = document.getElementById(pctId);
+  const diff = cw - pw;
+  const pct = growthPct(cw, pw);
+  valEl.textContent = isMoney ? fmtMoney(diff) : fmtInt(diff);
+  valEl.classList.remove('up','down');
+  pctEl.classList.remove('up','down');
+  if (diff > 0) { valEl.classList.add('up'); pctEl.classList.add('up'); pctEl.textContent = '▲ ' + (pct == null ? '—' : pct.toFixed(1) + '%'); }
+  else if (diff < 0) { valEl.classList.add('down'); pctEl.classList.add('down'); pctEl.textContent = '▼ ' + (pct == null ? '—' : Math.abs(pct).toFixed(1) + '%'); }
+  else { pctEl.textContent = pct == null ? '—' : '0%'; }
+}
+
+// ════════════════════════════════════════════════════
+// RENDER ALL
+// ════════════════════════════════════════════════════
+function renderAll() {
+  if (SALES.length === 0 && MKTG.length === 0) {
+    return;
+  }
+  renderInquiry();
+  renderLeads();
+  renderUnits();
+  renderRevenue();
+  renderTrends();
+  renderFunnel();
+  renderLeaderboard();
+}
+
+// ════ PAGE 1: INQUIRY ════
+function renderInquiry() {
+  const { cw, pw } = getCWPW();
+  const proj = document.getElementById('f_inq_project').value;
+  const cwI = sumMktg(cw, inquiryField, proj);
+  const pwI = sumMktg(pw, inquiryField, proj);
+  const cum = cumMktg(inquiryField, proj);
+
+  document.getElementById('kpi_inq_total').textContent = totalProjectsCount(proj);
+  document.getElementById('kpi_inq_cw').textContent = fmtInt(cwI);
+  document.getElementById('kpi_inq_pw').textContent = fmtInt(pwI);
+  document.getElementById('kpi_inq_cum').textContent = fmtInt(cum);
+  setGrowthKPI('kpi_inq_growth','kpi_inq_pct', cwI, pwI, false);
+
+  drawCWPWBar('ch_inq', proj, inquiryField, '#5a2a82', '#c39ad2', false, 'mktg');
+}
+
+// ════ PAGE 2: LEADS + COST ════
+function renderLeads() {
+  const { cw, pw } = getCWPW();
+  const proj = document.getElementById('f_leads_project').value;
+
+  const cwH = sumSales(cw, 'hot', proj);
+  const pwH = sumSales(pw, 'hot', proj);
+  const cwC = sumMktg(cw, 'cost', proj);
+  const pwC = sumMktg(pw, 'cost', proj);
+
+  document.getElementById('kpi_hot_cw').textContent = fmtInt(cwH);
+  document.getElementById('kpi_hot_pw').textContent = fmtInt(pwH);
+  setGrowthKPI('kpi_hot_growth','kpi_hot_pct', cwH, pwH, false);
+
+  document.getElementById('kpi_cost_cw').textContent = fmtMoney(cwC);
+  document.getElementById('kpi_cost_pw').textContent = fmtMoney(pwC);
+  setGrowthKPI('kpi_cost_growth','kpi_cost_pct', cwC, pwC, true);
+
+  drawCWPWBar('ch_hot', proj, 'hot', '#dc2626', '#fca5a5', false, 'sales');
+  drawCWPWBar('ch_cost', proj, 'cost', '#3b82f6', '#93c5fd', true, 'mktg');
+}
+
+// ════ PAGE 3: UNITS ════
+function renderUnits() {
+  const { cw, pw } = getCWPW();
+  const proj = document.getElementById('f_units_project').value;
+  const cwU = sumSales(cw, 'units', proj);
+  const pwU = sumSales(pw, 'units', proj);
+  const cum = cumSales('units', proj);
+
+  document.getElementById('kpi_un_cw').textContent = fmtInt(cwU);
+  document.getElementById('kpi_un_pw').textContent = fmtInt(pwU);
+  document.getElementById('kpi_un_cum').textContent = fmtInt(cum);
+  setGrowthKPI('kpi_un_growth','kpi_un_pct', cwU, pwU, false);
+
+  drawCWPWBar('ch_units', proj, 'units', '#16a34a', '#86efac', false, 'sales');
+}
+
+// ════ PAGE 4: REVENUE ════
+function renderRevenue() {
+  const { cw, pw } = getCWPW();
+  const proj = document.getElementById('f_rev_project').value;
+  const cwR = sumSales(cw, 'revenue', proj);
+  const pwR = sumSales(pw, 'revenue', proj);
+  const cum = cumSales('revenue', proj);
+
+  document.getElementById('kpi_rev_cw').textContent = fmtMoney(cwR);
+  document.getElementById('kpi_rev_pw').textContent = fmtMoney(pwR);
+  document.getElementById('kpi_rev_cum').textContent = fmtMoney(cum);
+  setGrowthKPI('kpi_rev_growth','kpi_rev_pct', cwR, pwR, true);
+
+  drawCWPWBar('ch_rev', proj, 'revenue', '#f59e0b', '#fcd34d', true, 'sales');
+}
+
+// ════ PAGE 5: TRENDS ════
+function renderTrends() {
+  const proj = document.getElementById('f_tr_project').value;
+  const weeks = getWeeks();
+  const labels = weeks.map(w => 'W' + w);
+
+  drawTrendLine('ch_trend_rev', labels, weeks.map(w => sumSales(w, 'revenue', proj)), '#f59e0b', true);
+  drawTrendLine('ch_trend_inq', labels, weeks.map(w => sumMktg(w, inquiryField, proj)), '#5a2a82', false);
+  drawTrendLine('ch_trend_hot', labels, weeks.map(w => sumSales(w, 'hot', proj)), '#dc2626', false);
+  drawTrendLine('ch_trend_un',  labels, weeks.map(w => sumSales(w, 'units', proj)), '#16a34a', false);
+}
+
+// ════ PAGE 6: FUNNEL ════
+function renderFunnel() {
+  const { cw } = getCWPW();
+  const proj = document.getElementById('f_fun_project').value;
+
+  const mq = MKTG.filter(m => m.weekNo === cw && (proj === '__ALL__' || m.project === proj));
+  const sa = SALES.filter(s => s.weekNo === cw && s.type === 'PROJECT TOTAL' && (proj === '__ALL__' || s.project === proj));
+
+  const mql  = mq.reduce((a,b) => a+b.mql, 0);
+  const sql  = mq.reduce((a,b) => a+b.sql, 0);
+  const sv   = mq.reduce((a,b) => a+b.sv,  0);
+  const warm = mq.reduce((a,b) => a+b.warm,0);
+  const hot  = sa.reduce((a,b) => a+b.hot, 0);
+  const book = sa.reduce((a,b) => a+b.units, 0);
+
+  const stages = [
+    {lab:'MQL',         val:mql,  prev:null, cls:'fb1'},
+    {lab:'SQL',         val:sql,  prev:mql,  cls:'fb2'},
+    {lab:'Site Visit',  val:sv,   prev:sql,  cls:'fb3'},
+    {lab:'Warm Lead',   val:warm, prev:sv,   cls:'fb4'},
+    {lab:'Hot Lead',    val:hot,  prev:warm, cls:'fb5'},
+    {lab:'Booked',      val:book, prev:hot,  cls:'fb6'}
+  ];
+  const max = Math.max(...stages.map(s => s.val), 1);
+
+  document.getElementById('funnelView').innerHTML = stages.map(s => {
+    const wd = Math.max((s.val/max)*100, 6);
+    const pct = s.prev != null ? fmtPct(s.val, s.prev) : '—';
+    return `
+      <div class="funnel-row">
+        <div class="funnel-label">${s.lab}</div>
+        <div class="funnel-bar ${s.cls}" style="width:${wd}%">${fmtInt(s.val)}</div>
+        <div class="funnel-val">${fmtInt(s.val)}</div>
+        <div class="funnel-pct">${pct}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('conv_mb').textContent = fmtPct(book, mql);
+  document.getElementById('conv_sh').textContent = fmtPct(hot, sv);
+  document.getElementById('conv_hb').textContent = fmtPct(book, hot);
+
+  const projects = [...new Set(MKTG.filter(m => m.weekNo === cw).map(m => m.project))].sort();
+  const tbl = projects.map(p => {
+    const m = MKTG.find(x => x.weekNo === cw && x.project === p) || {};
+    const s = SALES.find(x => x.weekNo === cw && x.type === 'PROJECT TOTAL' && x.project === p) || {};
+    return {project: p, mql: m.mql||0, sql: m.sql||0, sv: m.sv||0, warm: m.warm||0, hot: s.hot||0, book: s.units||0};
+  });
+
+  document.getElementById('funnelTable').innerHTML = `
+    <thead><tr>
+      <th class="tl">Project</th>
+      <th>MQL</th><th>SQL</th><th>SV</th><th>Warm</th><th>Hot</th><th>Booked</th>
+      <th>MQL→Book</th><th>SV→Hot</th><th>Hot→Book</th>
+    </tr></thead>
+    <tbody>${tbl.map(r => `
+      <tr>
+        <td class="tl"><strong>${r.project}</strong></td>
+        <td>${fmtInt(r.mql)}</td>
+        <td>${fmtInt(r.sql)}</td>
+        <td>${fmtInt(r.sv)}</td>
+        <td>${fmtInt(r.warm)}</td>
+        <td>${fmtInt(r.hot)}</td>
+        <td>${fmtInt(r.book)}</td>
+        <td style="color:var(--primary);font-weight:700">${fmtPct(r.book, r.mql)}</td>
+        <td style="color:var(--primary);font-weight:700">${fmtPct(r.hot, r.sv)}</td>
+        <td style="color:var(--primary);font-weight:700">${fmtPct(r.book, r.hot)}</td>
+      </tr>`).join('')}</tbody>`;
+}
+
+// ════ PAGE 7: LEADERBOARD ════
+function renderLeaderboard() {
+  const range = document.getElementById('lbRange').value;
+  const sortKey = document.getElementById('lbSort').value;
+
+  const weeks = getWeeks();
+  const cur = weeks[weeks.length-1], prev = weeks[weeks.length-2];
+
+  let rows = SALES.filter(s => s.type === 'STM' && s.stm);
+  if (range === 'this' && cur != null)        rows = rows.filter(s => s.weekNo === cur);
+  else if (range === 'last' && prev != null)  rows = rows.filter(s => s.weekNo === prev);
+  else if (range === '4w') {
+    const last4 = weeks.slice(-4);
+    rows = rows.filter(s => last4.includes(s.weekNo));
+  }
+
+  const map = {};
+  rows.forEach(s => {
+    if (!map[s.stm]) map[s.stm] = {stm:s.stm, units:0, sales:0, hot:0, projects:{}};
+    map[s.stm].units += s.units;
+    map[s.stm].sales += s.sales;
+    map[s.stm].hot   += s.hot;
+    map[s.stm].projects[s.project] = (map[s.stm].projects[s.project] || 0) + s.units;
+  });
+
+  const result = Object.values(map).map(r => {
+    const top = Object.entries(r.projects).sort((a,b) => b[1] - a[1])[0];
+    return {...r, topProject: top ? top[0] : '—'};
+  }).sort((a,b) => b[sortKey] - a[sortKey]);
+
+  if (result.length === 0) {
+    document.getElementById('lbTable').innerHTML =
+      '<thead><tr><th>STM</th></tr></thead><tbody><tr><td class="empty">No STM activity in this range.</td></tr></tbody>';
+    return;
+  }
+
+  document.getElementById('lbTable').innerHTML = `
+    <thead><tr>
+      <th>#</th><th class="tl">STM</th><th class="tl">Top project</th>
+      <th>Units</th><th>Sales</th><th>Hot Leads</th>
+    </tr></thead>
+    <tbody>${result.map((r,i) => {
+      const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      return `
+      <tr>
+        <td><span class="rank ${cls}">${i+1}</span></td>
+        <td class="tl"><strong>${r.stm}</strong></td>
+        <td class="tl" style="color:var(--muted)">${r.topProject}</td>
+        <td>${fmtInt(r.units)}</td>
+        <td>${fmtInt(r.sales)}</td>
+        <td>${fmtInt(r.hot)}</td>
+      </tr>`;
+    }).join('')}</tbody>`;
+}
+
+// ════════════════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════════════════
+function drawCWPWBar(canvasId, projectFilter, key, cwColor, pwColor, isMoney, source) {
+  const { cw, pw } = getCWPW();
+  let projects = getProjectsList();
+  if (projectFilter !== '__ALL__') projects = [projectFilter];
+
+  const cwData = projects.map(p =>
+    source === 'sales' ? sumSales(cw, key, p) : sumMktg(cw, key, p)
+  );
+  const pwData = projects.map(p =>
+    source === 'sales' ? sumSales(pw, key, p) : sumMktg(pw, key, p)
+  );
+
+  const ctx = document.getElementById(canvasId);
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: projects,
+      datasets: [
+        {label:'CW', data:cwData, backgroundColor:cwColor, borderRadius:4, maxBarThickness:50},
+        {label:'PW', data:pwData, backgroundColor:pwColor, borderRadius:4, maxBarThickness:50}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: {display:false},
+        datalabels: {
+          anchor:'end', align:'top', offset:2,
+          font:{family:'Inter', size:11, weight:700}, color:'#0a0a0a',
+          formatter: v => v === 0 ? '' : (isMoney ? fmtMoney(v) : fmtInt(v))
+        },
+        tooltip: {
+          backgroundColor:'#0a0a0a', titleFont:{family:'Inter', weight:700}, bodyFont:{family:'Inter'},
+          callbacks: { label: c => c.dataset.label + ': ' + (isMoney ? fmtMoney(c.parsed.y) : fmtInt(c.parsed.y)) }
+        }
+      },
+      layout: {padding: {top: 24}},
+      scales: {
+        x: {grid:{display:false}, ticks:{color:'#222', font:{family:'Inter', size:12, weight:600}}},
+        y: {grid:{color:'#e5e7eb'}, ticks:{color:'#6b7280', font:{family:'Inter', size:11}, callback: v => isMoney ? fmtMoney(v) : fmtInt(v)}, beginAtZero:true}
+      }
+    }
+  });
+}
+
+function drawTrendLine(canvasId, labels, data, color, isMoney) {
+  const ctx = document.getElementById(canvasId);
+  if (charts[canvasId]) charts[canvasId].destroy();
+  charts[canvasId] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: '', data,
+        borderColor: color, backgroundColor: color + '22',
+        tension:0.35, fill:true, borderWidth:3,
+        pointRadius:5, pointHoverRadius:7,
+        pointBackgroundColor: color, pointBorderColor:'#fff', pointBorderWidth:2
+      }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend: {display:false},
+        datalabels: {
+          align:'top', offset:6,
+          font:{family:'Inter', size:11, weight:700}, color:'#0a0a0a',
+          formatter: v => v === 0 ? '' : (isMoney ? fmtMoney(v) : fmtInt(v))
+        },
+        tooltip: {
+          backgroundColor:'#0a0a0a', titleFont:{family:'Inter', weight:700}, bodyFont:{family:'Inter'},
+          callbacks: { label: c => isMoney ? fmtMoney(c.parsed.y) : fmtInt(c.parsed.y) }
+        }
+      },
+      layout: {padding: {top: 20}},
+      scales: {
+        x: {grid:{display:false}, ticks:{color:'#222', font:{family:'Inter', weight:600}}},
+        y: {grid:{color:'#e5e7eb'}, ticks:{color:'#6b7280', callback: v => isMoney ? fmtMoney(v) : fmtInt(v)}, beginAtZero:true}
+      }
+    }
+  });
+}
 </script>
 </body>
 </html>
-

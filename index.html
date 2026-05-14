@@ -687,7 +687,7 @@ function sel(id){var el=document.getElementById(id);var v=(el&&el.value)?el.valu
 function processData(raw){
   var sales=(raw.sales||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_name||'').trim(),stm:(r.Stm_name||'').trim(),type:(r.Sales_type||'').trim(),target:+r.Target||0,actual:+r.Actual||0};});
   var meo=(raw.meo||[]).map(function(r){return{project:(r['Project Name']||'').trim(),target:+r['Target (Current Month)']||0,actual:+r['Actual till Date']||0,expected:+r['Expected Closing']||0};});
-  var inventory=(raw.inventory||[]).map(function(r){return{project:(r['Project Name']||'').trim(),total:+r['Total_units']||0,sold:+r['Units_sold']||0,available:+r['Units_Available']||0,potential:+r['Potential']||0};});
+  var inventory=(raw.inventory||[]).map(function(r){return{project:(r['Project Name']||'').trim(),total:+r['Total_units']||0,sold:+r['Units_sold']||0,available:+r['Units_Available']||0,potential:+r['Potential']||0};}).filter(function(r){return r.project;});
   var marketing=(raw.marketing||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),mqlT:+r.MQL_Target||0,mqlA:+r.MQL_Actual||0,sqlT:+r.SQL_Target||0,sqlA:+r.SQL_Actual||0,svT:+r.SV_Target||0,svA:+r.SV_Actual||0,clT:+r.Closures_Target||0,clA:+r.Closures_Actual||0};});
   var salesPY=(raw.salesPY||[]).map(function(r){return{month:(r.Month||'').trim(),project:(r.Project_Name||'').trim(),actual:+r.Actual||0};});
   var projects=[...new Set(sales.map(function(r){return r.project;}))].filter(Boolean).sort();
